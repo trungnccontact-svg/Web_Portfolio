@@ -2,5 +2,5 @@
 builder = "railpack"
 
 [deploy]
-startCommand = "HOSTNAME=0.0.0.0 node .next/standalone/server.js"
+startCommand = "next start -p $PORT"
 healthcheckPath = "/en"
