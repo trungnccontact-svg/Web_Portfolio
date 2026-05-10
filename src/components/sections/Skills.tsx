@@ -1,84 +1,45 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
-import AnimateOnScroll from "@/components/AnimateOnScroll";
-import {
-  Monitor,
-  Server,
-  Database,
-  Code,
-  Wrench,
-  Lightbulb,
-} from "lucide-react";
+import { AnimatedSection } from "@/components/common/animated-section";
+import { Chip } from "@/components/ui/chip";
 
-const categoryIcons: Record<string, React.ReactNode> = {
-  frontend: <Monitor size={20} />,
-  backend: <Server size={20} />,
-  database: <Database size={20} />,
-  languages: <Code size={20} />,
-  tools: <Wrench size={20} />,
-  practices: <Lightbulb size={20} />,
-};
+interface SkillCategory {
+  label: string;
+  items: string[];
+}
 
 export default function Skills() {
   const t = useTranslations("skills");
-  const categories = t.raw("categories") as Record<
-    string,
-    { label: string; items: string[] }
-  >;
-
-  const categoryKeys = Object.keys(categories);
+  const categories = t.raw("categories") as Record<string, SkillCategory>;
 
   return (
-    <section id="skills" className="py-20 sm:py-28 px-4 bg-surface/50">
-      <div className="max-w-4xl mx-auto">
-        <AnimateOnScroll>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-16 text-center">
-            <span className="gradient-text">{t("title")}</span>
-          </h2>
-        </AnimateOnScroll>
+    <section id="skills" className="py-20">
+      <div className="container max-w-5xl mx-auto px-4">
+        <AnimatedSection className="flex flex-col items-center space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight">
+              {t("title")}
+            </h2>
+            <div className="h-1.5 w-20 bg-primary mx-auto rounded-full" />
+          </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categoryKeys.map((key, catIndex) => {
-            const category = categories[key];
-            return (
-              <AnimateOnScroll key={key} delay={catIndex * 0.1}>
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  className="p-6 rounded-xl bg-background border border-border hover:border-primary/30 transition-all"
-                >
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                      {categoryIcons[key] || <Code size={20} />}
-                    </div>
-                    <h3 className="text-lg font-semibold">{category.label}</h3>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {category.items.map((skill, skillIndex) => (
-                      <motion.span
-                        key={skill}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{
-                          delay: catIndex * 0.05 + skillIndex * 0.05,
-                          type: "spring",
-                          stiffness: 300,
-                        }}
-                        whileHover={{ scale: 1.1 }}
-                        className="px-3 py-1.5 text-sm font-medium rounded-lg bg-primary/5 text-muted hover:text-primary hover:bg-primary/10 transition-colors cursor-default border border-transparent hover:border-primary/20"
-                      >
-                        {skill}
-                      </motion.span>
-                    ))}
-                  </div>
-                </motion.div>
-              </AnimateOnScroll>
-            );
-          })}
-        </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            {Object.entries(categories).map(([key, category], index) => (
+              <div key={key} className="space-y-4 p-6 rounded-xl border border-border bg-card/50 shadow-sm transition-all hover:shadow-md hover:border-primary/20">
+                <h3 className="font-heading text-lg font-bold text-primary border-b pb-2 flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  {category.label}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {category.items.map((skill, i) => (
+                    <Chip key={i} text={skill} variant="secondary" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );

@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import AnimateOnScroll from "@/components/AnimateOnScroll";
-import { GraduationCap, Award, Trophy } from "lucide-react";
+import { GraduationCap, Calendar, MapPin, Award, Trophy } from "lucide-react";
+import { AnimatedSection } from "@/components/common/animated-section";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Cert {
   name: string;
@@ -12,103 +13,100 @@ interface Cert {
 
 interface Activity {
   name: string;
-  role?: string;
+  role: string;
   detail?: string;
   org?: string;
   period?: string;
 }
 
 export default function Education() {
-  const tEdu = useTranslations("education");
+  const t = useTranslations("education");
   const tCert = useTranslations("certifications");
   const certs = tCert.raw("certs") as Cert[];
   const activities = tCert.raw("activities") as Activity[];
 
   return (
-    <section id="education" className="py-20 sm:py-28 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Education */}
-        <AnimateOnScroll>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center">
-            <span className="gradient-text">{tEdu("title")}</span>
-          </h2>
-        </AnimateOnScroll>
+    <section id="education" className="py-20 bg-muted/30">
+      <div className="container max-w-5xl mx-auto px-4">
+        <AnimatedSection className="flex flex-col items-center space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight">
+              {t("title")}
+            </h2>
+            <div className="h-1.5 w-20 bg-primary mx-auto rounded-full" />
+          </div>
 
-        <AnimateOnScroll delay={0.1}>
-          <div className="p-6 rounded-xl bg-surface border border-border mb-16 max-w-xl mx-auto">
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-lg bg-primary/10 shrink-0">
-                <GraduationCap size={24} className="text-primary" />
+          <div className="w-full max-w-3xl">
+            <Card className="overflow-hidden border border-border bg-card hover:border-primary/20 transition-all shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <GraduationCap size={24} className="text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="font-heading text-xl font-bold">{t("school")}</h3>
+                      <p className="text-primary font-medium">{t("degree")}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted text-muted-foreground font-heading text-xs font-semibold whitespace-nowrap self-start md:self-center">
+                    <Calendar size={14} />
+                    {t("period")}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Certifications & Activities */}
+          <div className="text-center space-y-4 pt-12">
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight">
+              {tCert("title")}
+            </h2>
+            <div className="h-1.5 w-20 bg-primary mx-auto rounded-full" />
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-6 w-full">
+            {/* Certs */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-xl font-bold flex items-center gap-2">
+                <Award className="text-primary" size={20} />
+                Certifications
+              </h3>
+              <div className="grid gap-4">
+                {certs.map((cert, i) => (
+                  <Card key={i} className="bg-card/50 border-border hover:border-primary/20 transition-all">
+                    <CardContent className="p-4">
+                      <h4 className="font-bold text-sm">{cert.name}</h4>
+                      <p className="text-xs text-muted-foreground">{cert.detail} • {cert.date}</p>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              <div>
-                <h3 className="text-lg font-semibold">{tEdu("school")}</h3>
-                <p className="text-muted text-sm mt-1">{tEdu("degree")}</p>
-                <p className="text-primary text-sm font-medium mt-2">
-                  {tEdu("period")}
-                </p>
+            </div>
+
+            {/* Activities */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-xl font-bold flex items-center gap-2">
+                <Trophy className="text-primary" size={20} />
+                Extracurricular
+              </h3>
+              <div className="grid gap-4">
+                {activities.map((act, i) => (
+                  <Card key={i} className="bg-card/50 border-border hover:border-primary/20 transition-all">
+                    <CardContent className="p-4">
+                      <h4 className="font-bold text-sm">{act.name}</h4>
+                      {act.role && <p className="text-xs text-primary font-medium">{act.role}</p>}
+                      {act.detail && <p className="text-[10px] text-muted-foreground">{act.detail}</p>}
+                      {act.org && <p className="text-[10px] text-muted-foreground">{act.org}</p>}
+                      {act.period && <p className="text-[10px] text-muted-foreground">{act.period}</p>}
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </div>
           </div>
-        </AnimateOnScroll>
-
-        {/* Certifications & Activities */}
-        <AnimateOnScroll>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center">
-            <span className="gradient-text">{tCert("title")}</span>
-          </h2>
-        </AnimateOnScroll>
-
-        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {/* Certs */}
-          {certs.map((cert, i) => (
-            <AnimateOnScroll key={i} delay={0.1}>
-              <div className="p-5 rounded-xl bg-surface border border-border hover:border-primary/30 transition-all">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-accent/10 shrink-0">
-                    <Award size={18} className="text-accent" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm">{cert.name}</h4>
-                    <p className="text-muted text-xs mt-1">{cert.detail}</p>
-                    <p className="text-primary text-xs font-medium mt-1.5">
-                      {cert.date}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </AnimateOnScroll>
-          ))}
-
-          {/* Activities */}
-          {activities.map((activity, i) => (
-            <AnimateOnScroll key={i} delay={0.15 + i * 0.05}>
-              <div className="p-5 rounded-xl bg-surface border border-border hover:border-primary/30 transition-all">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                    <Trophy size={18} className="text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm">{activity.name}</h4>
-                    {activity.role && (
-                      <p className="text-muted text-xs mt-1">{activity.role}</p>
-                    )}
-                    {activity.detail && (
-                      <p className="text-muted text-xs mt-1">{activity.detail}</p>
-                    )}
-                    {activity.org && (
-                      <p className="text-muted text-xs mt-1">{activity.org}</p>
-                    )}
-                    {activity.period && (
-                      <p className="text-primary text-xs font-medium mt-1.5">
-                        {activity.period}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </AnimateOnScroll>
-          ))}
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );

@@ -2,123 +2,118 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "framer-motion";
-import AnimateOnScroll from "@/components/AnimateOnScroll";
-import { Mail, Copy, Check, Send } from "lucide-react";
-import { GithubIcon, LinkedinIcon } from "@/components/icons/SocialIcons";
+import { Mail, Send, Github, Linkedin, Copy, Check } from "lucide-react";
+import { AnimatedSection } from "@/components/common/animated-section";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 
 const EMAIL = "trungnc.contact@gmail.com";
 
 export default function Contact() {
   const t = useTranslations("contact");
+  const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
-  const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(EMAIL);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback
-      const textarea = document.createElement("textarea");
-      textarea.value = EMAIL;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+  const copyEmail = () => {
+    navigator.clipboard.writeText(EMAIL);
+    setCopied(true);
+    toast({
+      title: t("copied"),
+      description: EMAIL,
+    });
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <section id="contact" className="py-20 sm:py-28 px-4 bg-surface/50">
-      <div className="max-w-xl mx-auto text-center">
-        <AnimateOnScroll>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            <span className="gradient-text">{t("title")}</span>
-          </h2>
-        </AnimateOnScroll>
-
-        <AnimateOnScroll delay={0.1}>
-          <p className="text-muted text-base sm:text-lg mb-10 leading-relaxed">
-            {t("description")}
-          </p>
-        </AnimateOnScroll>
-
-        <AnimateOnScroll delay={0.2}>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <a
-              href={`mailto:${EMAIL}`}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-all hover:shadow-lg hover:shadow-primary/25"
-            >
-              <Send size={18} />
-              {t("emailMe")}
-            </a>
-
-            <motion.button
-              onClick={copyEmail}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-border text-muted hover:text-foreground hover:border-primary/30 transition-all cursor-pointer"
-              whileTap={{ scale: 0.95 }}
-            >
-              <AnimatePresence mode="wait">
-                {copied ? (
-                  <motion.span
-                    key="check"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="flex items-center gap-2 text-green-500"
-                  >
-                    <Check size={18} />
-                    {t("copied")}
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="copy"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="flex items-center gap-2"
-                  >
-                    <Copy size={18} />
-                    {t("copyEmail")}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
+    <section id="contact" className="py-20">
+      <div className="container max-w-5xl mx-auto px-4">
+        <AnimatedSection className="flex flex-col items-center space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight">
+              {t("title")}
+            </h2>
+            <div className="h-1.5 w-20 bg-primary mx-auto rounded-full" />
+            <p className="text-muted-foreground max-w-md mx-auto pt-2">
+              {t("description")}
+            </p>
           </div>
-        </AnimateOnScroll>
 
-        <AnimateOnScroll delay={0.3}>
-          <div className="flex gap-5 justify-center">
-            <a
-              href={`mailto:${EMAIL}`}
-              className="p-3 rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-all"
-              aria-label="Email"
-            >
-              <Mail size={20} />
-            </a>
-            <a
-              href="https://github.com/trungit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-all"
-              aria-label="GitHub"
-            >
-              <GithubIcon size={20} />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/trung-junior-it-bd"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-all"
-              aria-label="LinkedIn"
-            >
-              <LinkedinIcon size={20} />
-            </a>
+          <div className="grid md:grid-cols-2 gap-12 w-full">
+            {/* Contact info */}
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h3 className="font-heading text-2xl font-bold">{t("title")}</h3>
+                <p className="text-muted-foreground leading-relaxed italic">
+                  "{t("description")}"
+                </p>
+              </div>
+
+              <div className="grid gap-4">
+                <Card className="border-border bg-card/50 overflow-hidden">
+                  <CardContent className="p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Mail className="text-primary" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Email</p>
+                        <p className="text-sm font-semibold">{EMAIL}</p>
+                      </div>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={copyEmail}
+                      className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex gap-4">
+                <Button variant="outline" size="icon" asChild className="rounded-full h-12 w-12 border-2 transition-transform hover:scale-110 active:scale-95">
+                  <a href="https://github.com/trungit" target="_blank" rel="noopener noreferrer">
+                    <Github size={20} />
+                  </a>
+                </Button>
+                <Button variant="outline" size="icon" asChild className="rounded-full h-12 w-12 border-2 transition-transform hover:scale-110 active:scale-95">
+                  <a href="https://www.linkedin.com/in/trung-junior-it-bd" target="_blank" rel="noopener noreferrer">
+                    <Linkedin size={20} />
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            {/* Form */}
+            <Card className="border-2 border-border shadow-xl">
+              <CardContent className="p-6">
+                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                  <div className="grid gap-2">
+                    <label htmlFor="name" className="text-sm font-medium">Name</label>
+                    <Input id="name" placeholder="Your Name" className="bg-muted/50" />
+                  </div>
+                  <div className="grid gap-2">
+                    <label htmlFor="email" className="text-sm font-medium">Email</label>
+                    <Input id="email" type="email" placeholder="email@example.com" className="bg-muted/50" />
+                  </div>
+                  <div className="grid gap-2">
+                    <label htmlFor="message" className="text-sm font-medium">Message</label>
+                    <Textarea id="message" placeholder="How can I help you?" className="min-h-[120px] bg-muted/50" />
+                  </div>
+                  <Button className="w-full h-12 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px]">
+                    <Send className="mr-2 h-5 w-5" />
+                    {t("emailMe")}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
-        </AnimateOnScroll>
+        </AnimatedSection>
       </div>
     </section>
   );

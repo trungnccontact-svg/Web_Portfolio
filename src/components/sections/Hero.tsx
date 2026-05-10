@@ -3,8 +3,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { ArrowDown, Download, Mail } from "lucide-react";
-import { GithubIcon, LinkedinIcon } from "@/components/icons/SocialIcons";
+import { Download, Mail, User } from "lucide-react";
+import { AnimatedSection } from "@/components/common/animated-section";
+import { AnimatedText } from "@/components/common/animated-text";
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   const t = useTranslations("hero");
@@ -86,10 +88,9 @@ export default function Hero() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(59, 130, 246, ${p.opacity})`;
+        ctx.fillStyle = `hsl(var(--primary) / ${p.opacity})`;
         ctx.fill();
 
-        // Draw connecting lines
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[j].x - p.x;
           const dy = particles[j].y - p.y;
@@ -98,7 +99,7 @@ export default function Hero() {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(59, 130, 246, ${0.05 * (1 - dist / 150)})`;
+            ctx.strokeStyle = `hsl(var(--primary) / ${0.05 * (1 - dist / 150)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -129,114 +130,53 @@ export default function Hero() {
   }, [animateParticles]);
 
   return (
-    <section
-      id="home"
-      className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden"
-    >
-      <canvas ref={canvasRef} className="particles-canvas" />
+    <section id="home" className="relative min-h-[90vh] flex items-center justify-center overflow-hidden border-b">
+      <canvas ref={canvasRef} className="particles-canvas opacity-30" />
+      
+      <AnimatedSection className="container relative z-10 flex flex-col items-center justify-center space-y-8 text-center py-20">
+        <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-border bg-muted flex items-center justify-center shadow-xl">
+          <User size={64} className="text-muted-foreground/50" />
+        </div>
+        
+        <div className="space-y-4">
+          <AnimatedText as="p" className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+            {t("greeting")}
+          </AnimatedText>
+          <AnimatedText as="h1" className="font-heading text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight">
+            {t("name")}
+          </AnimatedText>
+          <div className="text-xl sm:text-2xl md:text-3xl font-semibold text-primary h-10 flex items-center justify-center">
+            <span>{displayText}</span>
+            <motion.span 
+              animate={{ opacity: [0, 1, 0] }} 
+              transition={{ repeat: Infinity, duration: 0.8 }}
+              className="ml-1"
+            >
+              |
+            </motion.span>
+          </div>
+        </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-primary font-medium text-sm sm:text-base mb-4 tracking-wide"
-        >
-          {t("greeting")}
-        </motion.p>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 gradient-text leading-tight"
-        >
-          {t("name")}
-        </motion.h1>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-2xl sm:text-3xl md:text-4xl font-semibold text-muted mb-6 h-12 flex items-center justify-center"
-        >
-          <span>{displayText}</span>
-          <span className="animate-pulse ml-0.5 text-primary">|</span>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-muted text-base sm:text-lg max-w-xl mx-auto mb-8"
-        >
+        <AnimatedText as="p" delay={0.2} className="max-w-[700px] text-lg text-muted-foreground sm:text-xl leading-relaxed">
           {t("description")}
-        </motion.p>
+        </AnimatedText>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap gap-4 justify-center mb-10"
-        >
-          <a
-            href="/cv/nguyen-chi-trung.pdf"
-            download
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-all hover:shadow-lg hover:shadow-primary/25"
-          >
-            <Download size={18} />
-            {t("downloadCV")}
-          </a>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-primary text-primary font-medium hover:bg-primary/10 transition-all"
-          >
-            <Mail size={18} />
-            {t("contactMe")}
-          </a>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="flex gap-5 justify-center"
-        >
-          <a
-            href="https://github.com/trungit"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3 rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-all"
-            aria-label="GitHub"
-          >
-            <GithubIcon size={20} />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/trung-junior-it-bd"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3 rounded-full border border-border text-muted hover:text-primary hover:border-primary transition-all"
-            aria-label="LinkedIn"
-          >
-            <LinkedinIcon size={20} />
-          </a>
-        </motion.div>
-      </div>
-
-      {/* Scroll down indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-        >
-          <ArrowDown size={20} className="text-muted" />
-        </motion.div>
-      </motion.div>
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <Button asChild size="lg" className="rounded-full px-8 shadow-lg transition-transform hover:scale-105 active:scale-95">
+            <a href="/cv/nguyen-chi-trung.pdf" download>
+              <Download className="mr-2 h-4 w-4" />
+              {t("downloadCV")}
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="rounded-full px-8 transition-transform hover:scale-105 active:scale-95">
+            <a href="#contact">
+              <Mail className="mr-2 h-4 w-4" />
+              {t("contactMe")}
+            </a>
+          </Button>
+        </div>
+      </AnimatedSection>
     </section>
   );
 }
+
