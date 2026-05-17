@@ -24,6 +24,7 @@ export default async function HomePage({
       <Skills />
       <Education />
       <Contact />
+      
     </div>
   );
 }

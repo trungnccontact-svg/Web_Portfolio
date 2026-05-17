@@ -6,7 +6,8 @@
     "projects": "Projects",
     "skills": "Skills",
     "education": "Education",
-    "contact": "Contact"
+    "contact": "Contact",
+    "ai-job-agent": "AI Job Agent"
   },
   "hero": {
     "greeting": "Hi, my name is",

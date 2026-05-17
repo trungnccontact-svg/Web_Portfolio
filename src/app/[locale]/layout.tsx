@@ -11,6 +11,7 @@ import { MainNav } from "@/components/common/main-nav";
 import { ModeToggle } from "@/components/common/mode-toggle";
 import { LocaleToggle } from "@/components/common/locale-toggle";
 import { SiteFooter } from "@/components/common/site-footer";
+import ChatBox from "@/components/chat/ChatBox";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -76,6 +77,7 @@ export default async function LocaleLayout({
               <SiteFooter />
             </div>
             <ModalProvider />
+            <ChatBox />
             <Toaster />
           </NextIntlClientProvider>
         </ThemeProvider>
@@ -83,5 +85,3 @@ export default async function LocaleLayout({
     </html>
   );
 }
-
-

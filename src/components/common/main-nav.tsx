@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Norican } from "next/font/google";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 import { useTranslations } from "next-intl";
 
@@ -36,6 +36,7 @@ export function MainNav() {
   const t = useTranslations("nav");
   const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false);
   const pathname = usePathname();
+  const router = useRouter();
   const [activeSection, setActiveSection] = React.useState("home");
 
   const sections = ["home", "about", "experience", "projects", "skills", "education", "contact"];
@@ -62,6 +63,16 @@ export function MainNav() {
   }, []);
 
   const scrollToSection = (sectionId: string) => {
+    // If not on the home page, redirect to home page with hash
+    const localePrefix = pathname.split('/')[1]; // e.g., "en" or "vi"
+    const isHomePage = pathname === `/${localePrefix}` || pathname === '/';
+    
+    if (!isHomePage) {
+      router.push(`/${localePrefix}/#${sectionId}`);
+      setShowMobileMenu(false);
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -109,6 +120,25 @@ export function MainNav() {
             </button>
           </motion.div>
         ))}
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={navItemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+        >
+          <Link
+            href={`/${pathname.split('/')[1] || 'en'}/ai-job-agent`}
+            className={cn(
+              "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm cursor-pointer",
+              pathname.includes('/ai-job-agent')
+                ? "text-foreground"
+                : "text-foreground/60"
+            )}
+          >
+            {t("ai-job-agent")}
+          </Link>
+        </motion.div>
       </nav>
       <motion.button
         className="flex items-center space-x-2 md:hidden"
