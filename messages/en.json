@@ -342,6 +342,9 @@
     "usageLabel": "Usage Example",
     "aiExpandedTitle": "AI Vocabulary Expansion",
     "researchAllBtn": "Expand All Vocabulary with AI",
-    "expandingAll": "Expanding Entire List..."
+    "expandingAll": "Expanding Entire List...",
+    "readAllBtn": "Read Entire Card",
+    "readingAll": "Reading...",
+    "expressionLabel": "Expression / Sentence Pattern"
   }
 }

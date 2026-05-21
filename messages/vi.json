@@ -342,6 +342,9 @@
     "usageLabel": "Câu ví dụ",
     "aiExpandedTitle": "Từ vựng mở rộng bởi AI",
     "researchAllBtn": "AI Mở rộng toàn bộ từ vựng",
-    "expandingAll": "Đang mở rộng toàn bộ từ..."
+    "expandingAll": "Đang mở rộng toàn bộ từ...",
+    "readAllBtn": "Đọc toàn bộ thẻ",
+    "readingAll": "Đang đọc...",
+    "expressionLabel": "Cụm từ / Mẫu câu"
   }
 }

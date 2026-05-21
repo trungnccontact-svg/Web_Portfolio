@@ -102,37 +102,37 @@ If you have already submitted your feedback, we **highly appreciate** your coope
 * [Handwritten note in blue: **appreciate** (v) = trân trọng, đánh giá cao. appreciate + N/V-ing]`,
   vocabulary: [
     {
-      word: "postpone",
-      partOfSpeech: "verb",
-      vietnameseMeaning: "trì hoãn, hoãn lại một sự kiện",
+      word: "decided to postpone",
+      partOfSpeech: "sentence pattern",
+      vietnameseMeaning: "quyết định trì hoãn — cấu trúc decide + to-V kết hợp postpone + N/V-ing",
       example: "The executive board decided to postpone the annual meeting until next Monday.",
       formality: "both_cases",
       aiExpanded: {
         synonyms: [
-          { word: "delay", meaning: "làm chậm trễ, hoãn lại", usage: "The flight was delayed due to heavy rain." },
-          { word: "put off", meaning: "trì hoãn (phrasal verb, rất thông dụng)", usage: "Don't put off until tomorrow what you can do today." },
-          { word: "defer", meaning: "trì hoãn một quyết định/hành động chính thức", usage: "We decided to defer the decision until we get more details." }
+          { word: "chose to put off", meaning: "chọn cách hoãn lại (thông dụng trong giao tiếp hàng ngày)", usage: "We chose to put off the team dinner until everyone is available." },
+          { word: "agreed to delay", meaning: "đồng ý trì hoãn lại (nhấn mạnh sự đồng thuận)", usage: "Both parties agreed to delay the contract signing by one week." },
+          { word: "opted to defer", meaning: "quyết định hoãn lại (trang trọng, thường dùng trong công việc)", usage: "The committee opted to defer the budget review to next quarter." }
         ],
         antonyms: [
-          { word: "bring forward", meaning: "đẩy lịch lên sớm hơn", usage: "They brought forward the meeting to 9 AM." },
-          { word: "expedite", meaning: "thúc đẩy, đẩy nhanh tiến độ", usage: "We need to expedite the shipping process." },
-          { word: "advance", meaning: "tiến hành sớm hơn dự kiến", usage: "The date of the launch was advanced by two weeks." }
+          { word: "decided to bring forward", meaning: "quyết định đẩy lịch lên sớm hơn", usage: "They decided to bring forward the product launch to capture the holiday market." },
+          { word: "rushed to expedite", meaning: "gấp rút thúc đẩy nhanh tiến độ", usage: "The team rushed to expedite the shipping before the deadline." },
+          { word: "moved to advance", meaning: "tiến hành đẩy sớm hơn dự kiến", usage: "Management moved to advance the training schedule by two weeks." }
         ],
-        nuanceExplanation: "Trong giao tiếp thường ngày, 'put off' là cụm từ tự nhiên và thông dụng nhất để nói về việc hoãn lại điều gì đó. 'Postpone' trang trọng hơn và thường dùng trong bối cảnh công việc, cuộc họp, hoặc sự kiện chính thức. 'Delay' mang sắc thái bị động nhiều hơn (bị hoãn do yếu tố bên ngoài như thời tiết, sự cố)."
+        nuanceExplanation: "Trong giao tiếp thường ngày, 'chose to put off' là cách nói tự nhiên nhất. 'Decided to postpone' trang trọng hơn, phù hợp email công việc và họp chính thức. 'Opted to defer' rất formal, thường gặp trong biên bản họp và văn bản pháp lý. Khi muốn nói ngược lại (đẩy sớm hơn), 'decided to bring forward' là lựa chọn phổ biến nhất trong cả giao tiếp lẫn viết."
       }
     },
     {
-      word: "highly appreciate",
-      partOfSpeech: "phrase",
-      vietnameseMeaning: "đánh giá rất cao, trân trọng",
-      example: "We highly appreciate your prompt response and feedback.",
+      word: "highly appreciate your cooperation",
+      partOfSpeech: "expression",
+      vietnameseMeaning: "đánh giá rất cao sự hợp tác của bạn — cụm diễn đạt lịch sự trong email công việc",
+      example: "We highly appreciate your cooperation in this urgent matter.",
       formality: "formal_writing"
     },
     {
-      word: "cooperation",
-      partOfSpeech: "noun",
-      vietnameseMeaning: "sự hợp tác, sự đồng lòng",
-      example: "Thank you for your cooperation in this urgent matter.",
+      word: "submitted your feedback",
+      partOfSpeech: "sentence pattern",
+      vietnameseMeaning: "đã nộp/gửi phản hồi — cấu trúc submit + N thường dùng trong bối cảnh công việc",
+      example: "If you have already submitted your feedback, we will review it shortly.",
       formality: "both_cases"
     }
   ],
@@ -178,37 +178,37 @@ const SAMPLE_PRESET_2: ScannedSheet = {
    - *Example: He independently developed pixel-perfect UI screens in 2025.*`,
   vocabulary: [
     {
-      word: "currently",
-      partOfSpeech: "adverb",
-      vietnameseMeaning: "hiện tại, hiện thời",
-      example: "He is currently leading a group-buying e-commerce platform.",
+      word: "is currently leading",
+      partOfSpeech: "sentence pattern",
+      vietnameseMeaning: "đang hiện tại dẫn dắt/lãnh đạo — cấu trúc Present Continuous + trạng từ thời gian",
+      example: "He is currently leading the CONUT platform development team.",
       formality: "both_cases",
       aiExpanded: {
         synonyms: [
-          { word: "presently", meaning: "hiện nay, ngay lúc này", usage: "She is presently working on a new project." },
-          { word: "at present", meaning: "ở thời điểm hiện tại", usage: "At present, the system is performing normally." },
-          { word: "nowadays", meaning: "ngày nay (thường so sánh với quá khứ)", usage: "Nowadays, people rely heavily on smart devices." }
+          { word: "is presently managing", meaning: "hiện đang quản lý (trang trọng hơn, phù hợp email)", usage: "She is presently managing a cross-functional engineering team." },
+          { word: "is now heading", meaning: "hiện đang đứng đầu (ngắn gọn, tự nhiên trong giao tiếp)", usage: "He is now heading the AI research division at the company." },
+          { word: "is in charge of", meaning: "đang phụ trách/chịu trách nhiệm về", usage: "She is in charge of the entire front-end architecture." }
         ],
         antonyms: [
-          { word: "previously", meaning: "trước đây", usage: "The file was previously saved in the root folder." },
-          { word: "formerly", meaning: "cựu, thuở xưa", usage: "This building was formerly a textile factory." },
-          { word: "in the past", meaning: "trong quá khứ", usage: "In the past, people wrote letters by hand." }
+          { word: "previously led", meaning: "trước đây đã dẫn dắt (quá khứ đơn)", usage: "He previously led the mobile app team before switching to web." },
+          { word: "used to manage", meaning: "từng quản lý (thói quen trong quá khứ, không còn nữa)", usage: "She used to manage a team of 20 developers in Hanoi." },
+          { word: "stepped down from leading", meaning: "rời bỏ vị trí lãnh đạo", usage: "He stepped down from leading the project after two years." }
         ],
-        nuanceExplanation: "Trong giao tiếp, 'currently' và 'now' rất thông dụng và tự nhiên để chỉ trạng thái tạm thời đang diễn ra. 'Presently' trang trọng hơn một chút và rất phổ biến trong email công việc. Cần lưu ý 'nowadays' thường dùng để chỉ xu hướng chung của xã hội ngày nay chứ không dùng để chỉ một hành động cụ thể đang diễn ra ngay lúc này."
+        nuanceExplanation: "Trong giao tiếp hàng ngày, 'is now heading' ngắn gọn và tự nhiên nhất. 'Is currently leading' phổ biến trong cả nói lẫn viết. 'Is presently managing' trang trọng hơn, thường thấy trong email và báo cáo. 'Is in charge of' nhấn mạnh trách nhiệm hơn là vai trò lãnh đạo. Khi muốn diễn đạt ngược lại (không còn dẫn dắt), 'previously led' đơn giản nhất, còn 'used to manage' nhấn mạnh sự thay đổi."
       }
     },
     {
-      word: "independently",
-      partOfSpeech: "adverb",
-      vietnameseMeaning: "một cách độc lập, tự lực",
-      example: "She worked independently to fix the complex React application.",
+      word: "worked independently to fix",
+      partOfSpeech: "sentence pattern",
+      vietnameseMeaning: "tự mình sửa chữa một cách độc lập — nhấn mạnh khả năng tự lực giải quyết vấn đề",
+      example: "She worked independently to fix the complex React state management bug.",
       formality: "both_cases"
     },
     {
-      word: "general truth",
-      partOfSpeech: "noun phrase",
-      vietnameseMeaning: "sự thật hiển nhiên, chân lý",
-      example: "The scientific fact represents a general truth.",
+      word: "represents a general truth",
+      partOfSpeech: "expression",
+      vietnameseMeaning: "thể hiện một sự thật hiển nhiên — dùng với Simple Present cho chân lý bất biến",
+      example: "The sentence 'Water boils at 100°C' represents a general truth.",
       formality: "formal_writing"
     }
   ],
@@ -348,27 +348,30 @@ export function EnglishLearning() {
     
     try {
       const systemPrompt = `You are an expert English lexicographer and communication coach.
-Analyze the English word/phrase "${word}" (part of speech: "${partOfSpeech}") and provide highly natural, common communication-focused synonyms and antonyms that are widely used in daily conversations and business English. 
+Analyze the English expression/sentence pattern "${word}" (type: "${partOfSpeech}") and provide SENTENCE-LEVEL synonym and antonym structures that are widely used in daily conversations and business English.
 
-For synonyms and antonyms, do NOT list extremely rare or obscure words. Instead, list 2-3 words/phrases that a learner should use to vary their vocabulary in everyday speaking/writing.
+IMPORTANT:
+- For SYNONYMS: Provide 2-3 alternative sentence structures/expressions that express the SAME MEANING using different wording. These should be natural, commonly-used alternatives.
+- For ANTONYMS: Provide 2-3 sentence structures/expressions that express the OPPOSITE MEANING. These should be practical expressions a learner would actually encounter.
+- Do NOT return single isolated words. Always return multi-word expressions or sentence patterns.
 
 Return a single JSON object matching the following structure:
 {
   "synonyms": [
     {
-      "word": "synonym 1",
-      "meaning": "clear Vietnamese meaning explaining the synonym in context",
-      "usage": "natural example sentence using the synonym"
+      "word": "alternative expression or sentence pattern (multi-word)",
+      "meaning": "clear Vietnamese meaning explaining how this alternative is used in context",
+      "usage": "a full, natural example sentence demonstrating this alternative"
     }
   ],
   "antonyms": [
     {
-      "word": "antonym 1",
-      "meaning": "clear Vietnamese meaning explaining the antonym in context",
-      "usage": "natural example sentence using the antonym"
+      "word": "opposite-meaning expression or sentence pattern (multi-word)",
+      "meaning": "clear Vietnamese meaning explaining the opposite expression",
+      "usage": "a full, natural example sentence demonstrating this opposite expression"
     }
   ],
-  "nuanceExplanation": "A detailed explanation in Vietnamese (1-2 sentences) about when to use this word versus its synonyms/antonyms in common communication (e.g. formality, tone, or specific contexts)."
+  "nuanceExplanation": "A detailed explanation in Vietnamese (2-3 sentences) comparing when to use the original expression versus its synonym and antonym alternatives in common communication (e.g. formality level, spoken vs written, tone differences)."
 }
 Return ONLY the JSON string. Do not wrap in markdown code blocks. Ensure the JSON is valid.`;
 
@@ -439,28 +442,31 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks. Ensure the JSO
     
     try {
       const systemPrompt = `You are an expert English lexicographer and communication coach.
-Analyze the provided list of English vocabulary words and their parts of speech. For each word, provide highly natural, common communication-focused synonyms and antonyms that are widely used in daily conversations and business English.
+Analyze the provided list of English expressions/sentence patterns. For each expression, provide SENTENCE-LEVEL synonym and antonym structures that are widely used in daily conversations and business English.
 
-For synonyms and antonyms, do NOT list extremely rare or obscure words. Instead, list 2-3 words/phrases that a learner should use to vary their vocabulary in everyday speaking/writing.
+IMPORTANT:
+- For SYNONYMS: Provide 2-3 alternative sentence structures/expressions that express the SAME MEANING using different wording.
+- For ANTONYMS: Provide 2-3 sentence structures/expressions that express the OPPOSITE MEANING.
+- Do NOT return single isolated words. Always return multi-word expressions or sentence patterns.
 
-Return a single JSON object with the word names as keys, matching the following structure:
+Return a single JSON object with the expression names as keys, matching the following structure:
 {
-  "word_name": {
+  "expression_name": {
     "synonyms": [
       {
-        "word": "synonym 1",
-        "meaning": "clear Vietnamese meaning explaining the synonym in context",
-        "usage": "natural example sentence using the synonym"
+        "word": "alternative expression or sentence pattern (multi-word)",
+        "meaning": "clear Vietnamese meaning explaining how this alternative is used in context",
+        "usage": "a full, natural example sentence demonstrating this alternative"
       }
     ],
     "antonyms": [
       {
-        "word": "antonym 1",
-        "meaning": "clear Vietnamese meaning explaining the antonym in context",
-        "usage": "natural example sentence using the antonym"
+        "word": "opposite-meaning expression or sentence pattern (multi-word)",
+        "meaning": "clear Vietnamese meaning explaining the opposite expression",
+        "usage": "a full, natural example sentence demonstrating this opposite expression"
       }
     ],
-    "nuanceExplanation": "A detailed explanation in Vietnamese (1-2 sentences) about when to use this word versus its synonyms/antonyms in common communication (e.g. formality, tone, or specific contexts)."
+    "nuanceExplanation": "A detailed explanation in Vietnamese (2-3 sentences) comparing when to use the original versus alternatives in common communication."
   }
 }
 Return ONLY the JSON string. Do not wrap in markdown code blocks. Ensure the JSON is completely valid.`;
@@ -556,6 +562,62 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks. Ensure the JSO
     setSpeakingWord(null);
   };
 
+  // Read entire vocabulary card content aloud (word, example, synonyms, antonyms)
+  const handleReadEntireCard = (vocab: ScannedVocab) => {
+    if (!window.speechSynthesis) {
+      toast({
+        title: "Speech Synthesis unsupported",
+        description: "Your browser does not support audio speech synthesis.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const parts: string[] = [];
+
+    // Main expression
+    parts.push(vocab.word);
+    parts.push(`Part of speech: ${vocab.partOfSpeech}`);
+    parts.push(`Example: ${vocab.example}`);
+
+    // AI Expanded content
+    if (vocab.aiExpanded) {
+      if (vocab.aiExpanded.synonyms.length > 0) {
+        parts.push("Synonym sentence structures:");
+        vocab.aiExpanded.synonyms.forEach((syn, idx) => {
+          parts.push(`Number ${idx + 1}: ${syn.word}`);
+          parts.push(`Example: ${syn.usage}`);
+        });
+      }
+      if (vocab.aiExpanded.antonyms.length > 0) {
+        parts.push("Antonym sentence structures:");
+        vocab.aiExpanded.antonyms.forEach((ant, idx) => {
+          parts.push(`Number ${idx + 1}: ${ant.word}`);
+          parts.push(`Example: ${ant.usage}`);
+        });
+      }
+    }
+
+    const fullScript = parts.join(". ");
+    // Use a unique key to distinguish full-card reading from single-word reading
+    const readKey = `__readall__${vocab.word}`;
+
+    if (speakingWord === readKey) {
+      window.speechSynthesis.cancel();
+      setSpeakingWord(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(fullScript);
+    utterance.lang = "en-US";
+    utterance.rate = 0.9;
+    utterance.onend = () => setSpeakingWord(null);
+    utterance.onerror = () => setSpeakingWord(null);
+    setSpeakingWord(readKey);
+    window.speechSynthesis.speak(utterance);
+  };
+
   // ==========================================
   // SCAN WORKSPACE: DRAG, DROP & CLIPBOARD PASTE
   // ==========================================
@@ -645,17 +707,28 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks. Ensure the JSO
     try {
       const systemPrompt = `You are an elite AI English Syntax Scanner & Learning Assistant. 
 Analyze the provided image of an English worksheet, handwriting, or study material. 
-Transcribe the English text, extract vocabulary words/expressions, and analyze the grammar/syntax rules.
+Transcribe the English text, extract meaningful expressions/sentence patterns, and analyze the grammar/syntax rules.
+
+IMPORTANT RULES FOR VOCABULARY EXTRACTION:
+- Do NOT extract single isolated words (e.g. "postpone", "currently"). 
+- Instead, extract EXPRESSIONS, PHRASES, COLLOCATIONS, and SENTENCE PATTERNS that learners should master for natural communication.
+- Examples of good extractions: "decided to postpone", "highly appreciate your cooperation", "is currently leading", "worked independently to fix"
+- Each expression should be a meaningful multi-word unit that teaches how words combine naturally in English.
+- Classify each expression by formality:
+  - "common_communication": used in daily conversation, chatting, speaking
+  - "formal_writing": used in emails, newspapers, reports, formal documents
+  - "both_cases": used naturally in both spoken and written contexts
+
 You MUST respond with a single, clean JSON object matching the following structure:
 {
   "transcription": "A complete, beautifully formatted markdown transcription of the sheet, including any handwritten Vietnamese notes or annotations.",
   "vocabulary": [
     {
-      "word": "English vocabulary word or phrase",
-      "partOfSpeech": "noun, verb, adjective, adverb, preposition, conjunction, or phrase",
-      "vietnameseMeaning": "Vietnamese definition of this word",
-      "example": "An illustrative English sentence demonstrating correct usage",
-      "formality": "common_communication" // must be: "common_communication", "formal_writing", or "both_cases"
+      "word": "English expression, phrase, collocation, or sentence pattern (multi-word)",
+      "partOfSpeech": "expression, sentence pattern, phrase, collocation, phrasal verb, or idiom",
+      "vietnameseMeaning": "Vietnamese definition explaining the expression and how it is used in context",
+      "example": "A full, natural English sentence demonstrating correct usage of this expression",
+      "formality": "common_communication"
     }
   ],
   "grammar": [
@@ -1524,6 +1597,24 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                                             <Volume2 className="h-4 w-4" />
                                           )}
                                         </Button>
+
+                                        {/* Read Entire Card Voice */}
+                                        <Button 
+                                          variant="ghost" 
+                                          size="icon" 
+                                          className={cn(
+                                            "h-8 w-8 text-muted-foreground hover:text-cyan-400 hover:bg-cyan-500/10 rounded-full",
+                                            speakingWord === `__readall__${vocab.word}` && "text-cyan-400 bg-cyan-500/10"
+                                          )}
+                                          onClick={() => handleReadEntireCard(vocab)}
+                                          title={t("readAllBtn")}
+                                        >
+                                          {speakingWord === `__readall__${vocab.word}` ? (
+                                            <VolumeX className="h-4 w-4 text-cyan-400" />
+                                          ) : (
+                                            <FileText className="h-4 w-4" />
+                                          )}
+                                        </Button>
                                       </div>
                                     </CardContent>
 
@@ -1841,6 +1932,24 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                                 <VolumeX className="h-4 w-4 text-emerald-400" />
                               ) : (
                                 <Volume2 className="h-4 w-4" />
+                              )}
+                            </Button>
+
+                            {/* Read Entire Card Voice */}
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className={cn(
+                                "h-8 w-8 text-muted-foreground hover:text-cyan-400 hover:bg-cyan-500/10 rounded-full",
+                                speakingWord === `__readall__${vocab.word}` && "text-cyan-400 bg-cyan-500/10"
+                              )}
+                              onClick={() => handleReadEntireCard(vocab)}
+                              title={t("readAllBtn")}
+                            >
+                              {speakingWord === `__readall__${vocab.word}` ? (
+                                <VolumeX className="h-4 w-4 text-cyan-400" />
+                              ) : (
+                                <FileText className="h-4 w-4" />
                               )}
                             </Button>
                           </div>
