@@ -332,6 +332,16 @@
     "writeSentencePlaceholder": "Nhập câu chứa thành ngữ, từ lóng hoặc cụm từ bạn tự đặt (vd: 'He spilled the beans about the party')...",
     "aiCheckStructureBtn": "AI Kiểm tra & Tạo sổ tay",
     "pastedImageSuccess": "Đã dán ảnh thành công",
-    "pastedImageSuccessDesc": "Đã tải hình ảnh từ khay nhớ tạm."
+    "pastedImageSuccessDesc": "Đã tải hình ảnh từ khay nhớ tạm.",
+    "aiResearchBtn": "AI Mở rộng",
+    "aiResearching": "Đang mở rộng...",
+    "commonAlternatives": "Lựa chọn thay thế phổ biến",
+    "synonymsAntonyms": "Từ đồng nghĩa & Trái nghĩa giao tiếp",
+    "nuanceTip": "Sắc thái cách dùng",
+    "meaningLabel": "Ý nghĩa",
+    "usageLabel": "Câu ví dụ",
+    "aiExpandedTitle": "Từ vựng mở rộng bởi AI",
+    "researchAllBtn": "AI Mở rộng toàn bộ từ vựng",
+    "expandingAll": "Đang mở rộng toàn bộ từ..."
   }
 }

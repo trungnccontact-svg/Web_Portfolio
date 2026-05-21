@@ -332,6 +332,16 @@
     "writeSentencePlaceholder": "Type a sentence you composed using an idiom, slang, or collocation (e.g. 'He spilled the beans about the party')...",
     "aiCheckStructureBtn": "AI Check & Structure Notepad",
     "pastedImageSuccess": "Image Pasted Successfully",
-    "pastedImageSuccessDesc": "Loaded image from clipboard."
+    "pastedImageSuccessDesc": "Loaded image from clipboard.",
+    "aiResearchBtn": "AI Research",
+    "aiResearching": "Researching...",
+    "commonAlternatives": "Common Alternatives",
+    "synonymsAntonyms": "Common Communication Alternatives",
+    "nuanceTip": "Usage Nuance Tip",
+    "meaningLabel": "Meaning",
+    "usageLabel": "Usage Example",
+    "aiExpandedTitle": "AI Vocabulary Expansion",
+    "researchAllBtn": "Expand All Vocabulary with AI",
+    "expandingAll": "Expanding Entire List..."
   }
 }

@@ -31,6 +31,11 @@ interface ScannedVocab {
   vietnameseMeaning: string;
   example: string;
   formality: "common_communication" | "formal_writing" | "both_cases";
+  aiExpanded?: {
+    synonyms: { word: string; meaning: string; usage: string }[];
+    antonyms: { word: string; meaning: string; usage: string }[];
+    nuanceExplanation: string;
+  };
 }
 
 interface ScannedGrammar {
@@ -101,7 +106,20 @@ If you have already submitted your feedback, we **highly appreciate** your coope
       partOfSpeech: "verb",
       vietnameseMeaning: "trì hoãn, hoãn lại một sự kiện",
       example: "The executive board decided to postpone the annual meeting until next Monday.",
-      formality: "both_cases"
+      formality: "both_cases",
+      aiExpanded: {
+        synonyms: [
+          { word: "delay", meaning: "làm chậm trễ, hoãn lại", usage: "The flight was delayed due to heavy rain." },
+          { word: "put off", meaning: "trì hoãn (phrasal verb, rất thông dụng)", usage: "Don't put off until tomorrow what you can do today." },
+          { word: "defer", meaning: "trì hoãn một quyết định/hành động chính thức", usage: "We decided to defer the decision until we get more details." }
+        ],
+        antonyms: [
+          { word: "bring forward", meaning: "đẩy lịch lên sớm hơn", usage: "They brought forward the meeting to 9 AM." },
+          { word: "expedite", meaning: "thúc đẩy, đẩy nhanh tiến độ", usage: "We need to expedite the shipping process." },
+          { word: "advance", meaning: "tiến hành sớm hơn dự kiến", usage: "The date of the launch was advanced by two weeks." }
+        ],
+        nuanceExplanation: "Trong giao tiếp thường ngày, 'put off' là cụm từ tự nhiên và thông dụng nhất để nói về việc hoãn lại điều gì đó. 'Postpone' trang trọng hơn và thường dùng trong bối cảnh công việc, cuộc họp, hoặc sự kiện chính thức. 'Delay' mang sắc thái bị động nhiều hơn (bị hoãn do yếu tố bên ngoài như thời tiết, sự cố)."
+      }
     },
     {
       word: "highly appreciate",
@@ -164,7 +182,20 @@ const SAMPLE_PRESET_2: ScannedSheet = {
       partOfSpeech: "adverb",
       vietnameseMeaning: "hiện tại, hiện thời",
       example: "He is currently leading a group-buying e-commerce platform.",
-      formality: "both_cases"
+      formality: "both_cases",
+      aiExpanded: {
+        synonyms: [
+          { word: "presently", meaning: "hiện nay, ngay lúc này", usage: "She is presently working on a new project." },
+          { word: "at present", meaning: "ở thời điểm hiện tại", usage: "At present, the system is performing normally." },
+          { word: "nowadays", meaning: "ngày nay (thường so sánh với quá khứ)", usage: "Nowadays, people rely heavily on smart devices." }
+        ],
+        antonyms: [
+          { word: "previously", meaning: "trước đây", usage: "The file was previously saved in the root folder." },
+          { word: "formerly", meaning: "cựu, thuở xưa", usage: "This building was formerly a textile factory." },
+          { word: "in the past", meaning: "trong quá khứ", usage: "In the past, people wrote letters by hand." }
+        ],
+        nuanceExplanation: "Trong giao tiếp, 'currently' và 'now' rất thông dụng và tự nhiên để chỉ trạng thái tạm thời đang diễn ra. 'Presently' trang trọng hơn một chút và rất phổ biến trong email công việc. Cần lưu ý 'nowadays' thường dùng để chỉ xu hướng chung của xã hội ngày nay chứ không dùng để chỉ một hành động cụ thể đang diễn ra ngay lúc này."
+      }
     },
     {
       word: "independently",
@@ -247,6 +278,11 @@ export function EnglishLearning() {
   const [searchGrammarQuery, setSearchGrammarQuery] = useState("");
   const [searchNotepadQuery, setSearchNotepadQuery] = useState("");
 
+  // AI Vocabulary Expansion state
+  const [expandingWords, setExpandingWords] = useState<Record<string, boolean>>({});
+  const [expandedVocabKeys, setExpandedVocabKeys] = useState<Record<string, boolean>>({});
+  const [isExpandingAll, setIsExpandingAll] = useState(false);
+
   // ==========================================
   // INITIAL DATA LIFECYCLE
   // ==========================================
@@ -299,6 +335,191 @@ export function EnglishLearning() {
       description: "Default TOEIC and Verb Tense worksheets loaded.",
       variant: "default",
     });
+  };
+
+  // ==========================================
+  // AI VOCABULARY EXPANSION RESEARCH
+  // ==========================================
+
+  const handleAIExpandWord = async (sheetId: string | undefined, word: string, partOfSpeech: string) => {
+    const uniqueKey = `${sheetId || "bank"}_${word.toLowerCase()}_${partOfSpeech.toLowerCase()}`;
+    
+    setExpandingWords(prev => ({ ...prev, [uniqueKey]: true }));
+    
+    try {
+      const systemPrompt = `You are an expert English lexicographer and communication coach.
+Analyze the English word/phrase "${word}" (part of speech: "${partOfSpeech}") and provide highly natural, common communication-focused synonyms and antonyms that are widely used in daily conversations and business English. 
+
+For synonyms and antonyms, do NOT list extremely rare or obscure words. Instead, list 2-3 words/phrases that a learner should use to vary their vocabulary in everyday speaking/writing.
+
+Return a single JSON object matching the following structure:
+{
+  "synonyms": [
+    {
+      "word": "synonym 1",
+      "meaning": "clear Vietnamese meaning explaining the synonym in context",
+      "usage": "natural example sentence using the synonym"
+    }
+  ],
+  "antonyms": [
+    {
+      "word": "antonym 1",
+      "meaning": "clear Vietnamese meaning explaining the antonym in context",
+      "usage": "natural example sentence using the antonym"
+    }
+  ],
+  "nuanceExplanation": "A detailed explanation in Vietnamese (1-2 sentences) about when to use this word versus its synonyms/antonyms in common communication (e.g. formality, tone, or specific contexts)."
+}
+Return ONLY the JSON string. Do not wrap in markdown code blocks. Ensure the JSON is valid.`;
+
+      const responseText = await callOpenRouter(
+        systemPrompt,
+        `Expand on: "${word}" (${partOfSpeech})`,
+        "deepseek/deepseek-v4-flash:free"
+      );
+
+      const cleanedText = responseText.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
+      const expandedData = JSON.parse(cleanedText);
+
+      // Update scannedSheets
+      const updatedSheets = scannedSheets.map(sheet => {
+        const shouldUpdate = sheetId ? sheet.id === sheetId : sheet.vocabulary.some(v => v.word.toLowerCase() === word.toLowerCase() && v.partOfSpeech.toLowerCase() === partOfSpeech.toLowerCase());
+        
+        if (shouldUpdate) {
+          const updatedVocab = sheet.vocabulary.map(v => {
+            if (v.word.toLowerCase() === word.toLowerCase() && v.partOfSpeech.toLowerCase() === partOfSpeech.toLowerCase()) {
+              return {
+                ...v,
+                aiExpanded: expandedData
+              };
+            }
+            return v;
+          });
+          
+          return {
+            ...sheet,
+            vocabulary: updatedVocab
+          };
+        }
+        return sheet;
+      });
+
+      saveSheetsToStorage(updatedSheets);
+      
+      if (selectedSheet) {
+        const matchingUpdatedSheet = updatedSheets.find(s => s.id === selectedSheet.id);
+        if (matchingUpdatedSheet) {
+          setSelectedSheet(matchingUpdatedSheet);
+        }
+      }
+
+      setExpandedVocabKeys(prev => ({ ...prev, [uniqueKey]: true }));
+
+      toast({
+        title: "Vocabulary Expanded",
+        description: `Successfully researched synonyms & antonyms for "${word}".`
+      });
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        title: "Expansion Failed",
+        description: err.message || "Failed to research synonyms and antonyms. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setExpandingWords(prev => ({ ...prev, [uniqueKey]: false }));
+    }
+  };
+
+  const handleAIExpandAllWords = async (sheetId: string) => {
+    const sheet = scannedSheets.find(s => s.id === sheetId);
+    if (!sheet) return;
+
+    setIsExpandingAll(true);
+    
+    try {
+      const systemPrompt = `You are an expert English lexicographer and communication coach.
+Analyze the provided list of English vocabulary words and their parts of speech. For each word, provide highly natural, common communication-focused synonyms and antonyms that are widely used in daily conversations and business English.
+
+For synonyms and antonyms, do NOT list extremely rare or obscure words. Instead, list 2-3 words/phrases that a learner should use to vary their vocabulary in everyday speaking/writing.
+
+Return a single JSON object with the word names as keys, matching the following structure:
+{
+  "word_name": {
+    "synonyms": [
+      {
+        "word": "synonym 1",
+        "meaning": "clear Vietnamese meaning explaining the synonym in context",
+        "usage": "natural example sentence using the synonym"
+      }
+    ],
+    "antonyms": [
+      {
+        "word": "antonym 1",
+        "meaning": "clear Vietnamese meaning explaining the antonym in context",
+        "usage": "natural example sentence using the antonym"
+      }
+    ],
+    "nuanceExplanation": "A detailed explanation in Vietnamese (1-2 sentences) about when to use this word versus its synonyms/antonyms in common communication (e.g. formality, tone, or specific contexts)."
+  }
+}
+Return ONLY the JSON string. Do not wrap in markdown code blocks. Ensure the JSON is completely valid.`;
+
+      const vocabListPayload = sheet.vocabulary.map(v => ({ word: v.word, partOfSpeech: v.partOfSpeech }));
+
+      const responseText = await callOpenRouter(
+        systemPrompt,
+        `Expand all words in this list: ${JSON.stringify(vocabListPayload)}`,
+        "deepseek/deepseek-v4-flash:free"
+      );
+
+      const cleanedText = responseText.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
+      const batchData = JSON.parse(cleanedText);
+
+      const updatedSheets = scannedSheets.map(s => {
+        if (s.id === sheetId) {
+          const updatedVocab = s.vocabulary.map(v => {
+            const wordKey = v.word;
+            const foundKey = Object.keys(batchData).find(k => k.toLowerCase() === wordKey.toLowerCase());
+            if (foundKey && batchData[foundKey]) {
+              return {
+                ...v,
+                aiExpanded: batchData[foundKey]
+              };
+            }
+            return v;
+          });
+          return {
+            ...s,
+            vocabulary: updatedVocab
+          };
+        }
+        return s;
+      });
+
+      saveSheetsToStorage(updatedSheets);
+
+      if (selectedSheet && selectedSheet.id === sheetId) {
+        const matchingUpdatedSheet = updatedSheets.find(s => s.id === sheetId);
+        if (matchingUpdatedSheet) {
+          setSelectedSheet(matchingUpdatedSheet);
+        }
+      }
+
+      toast({
+        title: "All Vocabulary Expanded",
+        description: "Synonyms & antonyms successfully generated for all words."
+      });
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        title: "Batch Expansion Failed",
+        description: err.message || "Failed to batch expand vocabulary. Please expand words individually.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsExpandingAll(false);
+    }
   };
 
   // ==========================================
@@ -1220,40 +1441,160 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                             <div className="text-center py-12 text-xs text-muted-foreground">No vocabulary detected.</div>
                           ) : (
                             <div className="space-y-4">
-                              {selectedSheet.vocabulary.map((vocab, i) => (
-                                <Card key={i} className="border border-border/60 hover:border-emerald-500/30 transition-all">
-                                  <CardContent className="p-4 flex justify-between items-start gap-4">
-                                    <div className="space-y-2 flex-1">
-                                      <div className="flex flex-wrap items-center gap-2">
-                                        <h4 className="text-sm font-bold text-emerald-400">{vocab.word}</h4>
-                                        <Badge variant="outline" className="text-[9px] px-1.5 py-0.2 capitalize">
-                                          {vocab.partOfSpeech}
-                                        </Badge>
-                                        <Badge variant="secondary" className="text-[9px] px-1.5 py-0.2 opacity-80">
-                                          {vocab.formality === "common_communication" ? t("common_communication") : 
-                                           vocab.formality === "formal_writing" ? t("formal_writing") : t("both_cases")}
-                                        </Badge>
+                              {/* Batch Expand Button */}
+                              {selectedSheet.vocabulary.some(v => !v.aiExpanded) && (
+                                <div className="flex justify-end mb-2">
+                                  <Button
+                                    variant="outline"
+                                    size="xs"
+                                    onClick={() => handleAIExpandAllWords(selectedSheet.id)}
+                                    disabled={isExpandingAll}
+                                    className="bg-emerald-500/5 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 text-[10px] h-7"
+                                  >
+                                    {isExpandingAll ? (
+                                      <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> {t("expandingAll")}</>
+                                    ) : (
+                                      <><Sparkles className="h-3 w-3 mr-1 animate-pulse" /> {t("researchAllBtn")}</>
+                                    )}
+                                  </Button>
+                                </div>
+                              )}
+
+                              {selectedSheet.vocabulary.map((vocab, i) => {
+                                const cardKey = `${selectedSheet.id}_${vocab.word.toLowerCase()}_${vocab.partOfSpeech.toLowerCase()}`;
+                                const isExpanding = expandingWords[cardKey];
+                                const isExpanded = expandedVocabKeys[cardKey];
+                                
+                                return (
+                                  <Card key={i} className="border border-border/60 hover:border-emerald-500/30 transition-all overflow-hidden">
+                                    <CardContent className="p-4 flex justify-between items-start gap-4">
+                                      <div className="space-y-2 flex-1">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                          <h4 className="text-sm font-bold text-emerald-400">{vocab.word}</h4>
+                                          <Badge variant="outline" className="text-[9px] px-1.5 py-0.2 capitalize">
+                                            {vocab.partOfSpeech}
+                                          </Badge>
+                                          <Badge variant="secondary" className="text-[9px] px-1.5 py-0.2 opacity-80">
+                                            {vocab.formality === "common_communication" ? t("common_communication") : 
+                                             vocab.formality === "formal_writing" ? t("formal_writing") : t("both_cases")}
+                                          </Badge>
+                                        </div>
+                                        <p className="text-xs text-foreground font-medium">{vocab.vietnameseMeaning}</p>
+                                        <p className="text-[11px] text-muted-foreground italic pl-3 border-l-2 border-emerald-500/20">
+                                          "{vocab.example}"
+                                        </p>
                                       </div>
-                                      <p className="text-xs text-foreground font-medium">{vocab.vietnameseMeaning}</p>
-                                      <p className="text-[11px] text-muted-foreground italic pl-3 border-l-2 border-emerald-500/20">
-                                        "{vocab.example}"
-                                      </p>
-                                    </div>
-                                    <Button 
-                                      variant="ghost" 
-                                      size="icon" 
-                                      className="h-8 w-8 shrink-0 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full"
-                                      onClick={() => handlePronounce(vocab.word)}
-                                    >
-                                      {speakingWord === vocab.word ? (
-                                        <VolumeX className="h-4 w-4 text-emerald-400" />
-                                      ) : (
-                                        <Volume2 className="h-4 w-4" />
+                                      
+                                      <div className="flex gap-1 shrink-0">
+                                        <Button 
+                                          variant="ghost" 
+                                          size="icon" 
+                                          className={cn(
+                                            "h-8 w-8 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full",
+                                            vocab.aiExpanded && "text-emerald-400"
+                                          )}
+                                          onClick={() => {
+                                            if (vocab.aiExpanded) {
+                                              setExpandedVocabKeys(prev => ({ ...prev, [cardKey]: !prev[cardKey] }));
+                                            } else {
+                                              handleAIExpandWord(selectedSheet.id, vocab.word, vocab.partOfSpeech);
+                                            }
+                                          }}
+                                          disabled={isExpanding}
+                                          title={t("aiResearchBtn")}
+                                        >
+                                          {isExpanding ? (
+                                            <Loader2 className="h-4 w-4 animate-spin text-emerald-400" />
+                                          ) : vocab.aiExpanded ? (
+                                            <Sparkles className="h-4 w-4 fill-emerald-400/20" />
+                                          ) : (
+                                            <Brain className="h-4 w-4" />
+                                          )}
+                                        </Button>
+
+                                        <Button 
+                                          variant="ghost" 
+                                          size="icon" 
+                                          className="h-8 w-8 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full"
+                                          onClick={() => handlePronounce(vocab.word)}
+                                        >
+                                          {speakingWord === vocab.word ? (
+                                            <VolumeX className="h-4 w-4 text-emerald-400" />
+                                          ) : (
+                                            <Volume2 className="h-4 w-4" />
+                                          )}
+                                        </Button>
+                                      </div>
+                                    </CardContent>
+
+                                    {/* AI Vocabulary Expansion Dropdown */}
+                                    <AnimatePresence>
+                                      {vocab.aiExpanded && isExpanded && (
+                                        <motion.div
+                                          initial={{ height: 0, opacity: 0 }}
+                                          animate={{ height: "auto", opacity: 1 }}
+                                          exit={{ height: 0, opacity: 0 }}
+                                          transition={{ duration: 0.2 }}
+                                          className="border-t border-border/30 bg-emerald-500/[0.02] overflow-hidden"
+                                        >
+                                          <div className="p-4 space-y-4 text-xs leading-relaxed">
+                                            
+                                            {/* Synonyms & Antonyms grid */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                              {/* Synonyms */}
+                                              <div className="space-y-2">
+                                                <h5 className="font-semibold text-emerald-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                                                  <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] px-1 py-0 h-4 uppercase">Synonyms</Badge>
+                                                  {t("commonAlternatives")}
+                                                </h5>
+                                                <div className="space-y-2 pl-1 border-l-2 border-emerald-500/10">
+                                                  {vocab.aiExpanded.synonyms.map((syn, sIdx) => (
+                                                    <div key={sIdx} className="space-y-0.5">
+                                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span className="font-bold text-foreground">{syn.word}</span>
+                                                        <span className="text-[10px] text-muted-foreground">• {syn.meaning}</span>
+                                                      </div>
+                                                      <p className="text-[10px] text-muted-foreground italic pl-3 border-l border-border/50">"{syn.usage}"</p>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+
+                                              {/* Antonyms */}
+                                              <div className="space-y-2">
+                                                <h5 className="font-semibold text-yellow-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                                                  <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 text-[9px] px-1 py-0 h-4 uppercase">Antonyms</Badge>
+                                                  {t("commonAlternatives")}
+                                                </h5>
+                                                <div className="space-y-2 pl-1 border-l-2 border-yellow-500/10">
+                                                  {vocab.aiExpanded.antonyms.map((ant, aIdx) => (
+                                                    <div key={aIdx} className="space-y-0.5">
+                                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span className="font-bold text-foreground">{ant.word}</span>
+                                                        <span className="text-[10px] text-muted-foreground">• {ant.meaning}</span>
+                                                      </div>
+                                                      <p className="text-[10px] text-muted-foreground italic pl-3 border-l border-border/50">"{ant.usage}"</p>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            {/* Nuance Explanation */}
+                                            {vocab.aiExpanded.nuanceExplanation && (
+                                              <div className="pt-3 border-t border-border/20 space-y-1 bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/10">
+                                                <span className="font-semibold text-emerald-400 text-[10px] uppercase tracking-wider block">{t("nuanceTip")}</span>
+                                                <p className="text-muted-foreground text-[11px] leading-relaxed">{vocab.aiExpanded.nuanceExplanation}</p>
+                                              </div>
+                                            )}
+
+                                          </div>
+                                        </motion.div>
                                       )}
-                                    </Button>
-                                  </CardContent>
-                                </Card>
-                              ))}
+                                    </AnimatePresence>
+                                  </Card>
+                                );
+                              })}
                             </div>
                           )}
                         </motion.div>
@@ -1438,40 +1779,141 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                 </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredVocab.map((vocab, i) => (
-                    <Card key={i} className="border border-border/60 hover:border-emerald-500/30 transition-all">
-                      <CardContent className="p-4 flex justify-between items-start gap-4">
-                        <div className="space-y-2 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h4 className="text-sm font-bold text-emerald-400">{vocab.word}</h4>
-                            <Badge variant="outline" className="text-[9px] px-1.5 py-0.2 capitalize">
-                              {vocab.partOfSpeech}
-                            </Badge>
-                            <Badge variant="secondary" className="text-[9px] px-1.5 py-0.2 opacity-80">
-                              {vocab.formality === "common_communication" ? t("common_communication") : 
-                               vocab.formality === "formal_writing" ? t("formal_writing") : t("both_cases")}
-                            </Badge>
+                  {filteredVocab.map((vocab, i) => {
+                    const cardKey = `bank_${vocab.word.toLowerCase()}_${vocab.partOfSpeech.toLowerCase()}`;
+                    const isExpanding = expandingWords[cardKey];
+                    const isExpanded = expandedVocabKeys[cardKey];
+
+                    return (
+                      <Card key={i} className="border border-border/60 hover:border-emerald-500/30 transition-all overflow-hidden">
+                        <CardContent className="p-4 flex justify-between items-start gap-4">
+                          <div className="space-y-2 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h4 className="text-sm font-bold text-emerald-400">{vocab.word}</h4>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0.2 capitalize">
+                                {vocab.partOfSpeech}
+                              </Badge>
+                              <Badge variant="secondary" className="text-[9px] px-1.5 py-0.2 opacity-80">
+                                {vocab.formality === "common_communication" ? t("common_communication") : 
+                                 vocab.formality === "formal_writing" ? t("formal_writing") : t("both_cases")}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-foreground font-medium">{vocab.vietnameseMeaning}</p>
+                            <p className="text-[11px] text-muted-foreground italic pl-3 border-l-2 border-emerald-500/20">
+                              "{vocab.example}"
+                            </p>
                           </div>
-                          <p className="text-xs text-foreground font-medium">{vocab.vietnameseMeaning}</p>
-                          <p className="text-[11px] text-muted-foreground italic pl-3 border-l-2 border-emerald-500/20">
-                            "{vocab.example}"
-                          </p>
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 shrink-0 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full"
-                          onClick={() => handlePronounce(vocab.word)}
-                        >
-                          {speakingWord === vocab.word ? (
-                            <VolumeX className="h-4 w-4 text-emerald-400" />
-                          ) : (
-                            <Volume2 className="h-4 w-4" />
+                          
+                          <div className="flex gap-1 shrink-0">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className={cn(
+                                "h-8 w-8 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full",
+                                vocab.aiExpanded && "text-emerald-400"
+                              )}
+                              onClick={() => {
+                                if (vocab.aiExpanded) {
+                                  setExpandedVocabKeys(prev => ({ ...prev, [cardKey]: !prev[cardKey] }));
+                                } else {
+                                  handleAIExpandWord(undefined, vocab.word, vocab.partOfSpeech);
+                                }
+                              }}
+                              disabled={isExpanding}
+                              title={t("aiResearchBtn")}
+                            >
+                              {isExpanding ? (
+                                <Loader2 className="h-4 w-4 animate-spin text-emerald-400" />
+                              ) : vocab.aiExpanded ? (
+                                <Sparkles className="h-4 w-4 fill-emerald-400/20" />
+                              ) : (
+                                <Brain className="h-4 w-4" />
+                              )}
+                            </Button>
+
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full"
+                              onClick={() => handlePronounce(vocab.word)}
+                            >
+                              {speakingWord === vocab.word ? (
+                                <VolumeX className="h-4 w-4 text-emerald-400" />
+                              ) : (
+                                <Volume2 className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+                        </CardContent>
+
+                        {/* AI Vocabulary Expansion Dropdown */}
+                        <AnimatePresence>
+                          {vocab.aiExpanded && isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="border-t border-border/30 bg-emerald-500/[0.02] overflow-hidden"
+                            >
+                              <div className="p-4 space-y-4 text-xs leading-relaxed">
+                                
+                                {/* Synonyms & Antonyms grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  {/* Synonyms */}
+                                  <div className="space-y-2">
+                                    <h5 className="font-semibold text-emerald-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                                      <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] px-1 py-0 h-4 uppercase">Synonyms</Badge>
+                                      {t("commonAlternatives")}
+                                    </h5>
+                                    <div className="space-y-2 pl-1 border-l-2 border-emerald-500/10">
+                                      {vocab.aiExpanded.synonyms.map((syn, sIdx) => (
+                                        <div key={sIdx} className="space-y-0.5">
+                                          <div className="flex items-center gap-1.5 flex-wrap">
+                                            <span className="font-bold text-foreground">{syn.word}</span>
+                                            <span className="text-[10px] text-muted-foreground">• {syn.meaning}</span>
+                                          </div>
+                                          <p className="text-[10px] text-muted-foreground italic pl-3 border-l border-border/50">"{syn.usage}"</p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Antonyms */}
+                                  <div className="space-y-2">
+                                    <h5 className="font-semibold text-yellow-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                                      <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 text-[9px] px-1 py-0 h-4 uppercase">Antonyms</Badge>
+                                      {t("commonAlternatives")}
+                                    </h5>
+                                    <div className="space-y-2 pl-1 border-l-2 border-yellow-500/10">
+                                      {vocab.aiExpanded.antonyms.map((ant, aIdx) => (
+                                        <div key={aIdx} className="space-y-0.5">
+                                          <div className="flex items-center gap-1.5 flex-wrap">
+                                            <span className="font-bold text-foreground">{ant.word}</span>
+                                            <span className="text-[10px] text-muted-foreground">• {ant.meaning}</span>
+                                          </div>
+                                          <p className="text-[10px] text-muted-foreground italic pl-3 border-l border-border/50">"{ant.usage}"</p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Nuance Explanation */}
+                                {vocab.aiExpanded.nuanceExplanation && (
+                                  <div className="pt-3 border-t border-border/20 space-y-1 bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/10">
+                                    <span className="font-semibold text-emerald-400 text-[10px] uppercase tracking-wider block">{t("nuanceTip")}</span>
+                                    <p className="text-muted-foreground text-[11px] leading-relaxed">{vocab.aiExpanded.nuanceExplanation}</p>
+                                  </div>
+                                )}
+
+                              </div>
+                            </motion.div>
                           )}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </AnimatePresence>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
             </motion.div>
