@@ -206,7 +206,7 @@ Tập trung vào các vị trí IT phù hợp tại Việt Nam.`;
         const jobListStr = allJobs.map((j, i) => `Job ${i}: ${j.title}. Mô tả: ${j.snippet}`).join("\n");
         
         try {
-          const scoringResponse = await callOpenRouter(scoringPrompt, jobListStr, "deepseek/deepseek-chat-v3-0324:free");
+          const scoringResponse = await callOpenRouter(scoringPrompt, jobListStr, "deepseek/deepseek-v4-flash:free");
           const scores = JSON.parse(scoringResponse);
           if (Array.isArray(scores)) {
             scores.forEach((s: any) => {
@@ -300,7 +300,7 @@ Yêu cầu QUAN TRỌNG:
 3. Ngôn ngữ: Tiếng Việt.
 4. Trả về plain text, không markdown, không ký tự đặc biệt.`;
       
-      const responseText = await callOpenRouter(prompt, "Viết cover letter", "deepseek/deepseek-chat-v3-0324:free");
+      const responseText = await callOpenRouter(prompt, "Viết cover letter", "deepseek/deepseek-v4-flash:free");
       setCoverLetter(responseText);
     } catch (error: any) {
       toast({ title: "Lỗi tạo Cover Letter", description: error.message || "Đã xảy ra lỗi khi viết Cover Letter.", variant: "destructive" });

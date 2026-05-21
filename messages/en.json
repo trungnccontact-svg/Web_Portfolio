@@ -7,7 +7,8 @@
     "skills": "Skills",
     "education": "Education",
     "contact": "Contact",
-    "ai-job-agent": "AI Job Agent"
+    "ai-job-agent": "AI Job Agent",
+    "notepad": "Notepad"
   },
   "hero": {
     "greeting": "Hi, my name is",
@@ -208,5 +209,31 @@
   "footer": {
     "designed": "Designed & Built by Nguyen Chi Trung",
     "rights": "All Rights Reserved"
+  },
+  "notepad": {
+    "title": "Interactive Notepad",
+    "search": "Search notes...",
+    "newNote": "New Note",
+    "words": "words",
+    "chars": "chars",
+    "save": "Save",
+    "saved": "Saved!",
+    "delete": "Delete",
+    "export": "Export",
+    "editMode": "Edit",
+    "previewMode": "Preview",
+    "splitMode": "Split",
+    "untitled": "Untitled Note",
+    "emptyState": "Create a new note or select an existing one to get started!",
+    "confirmDelete": "Are you sure you want to delete this note?",
+    "personal": "Personal",
+    "work": "Work",
+    "ideas": "Ideas",
+    "scratchpad": "Scratchpad",
+    "allNotes": "All Notes",
+    "exportTxt": "Export as Text (.txt)",
+    "exportMd": "Export as Markdown (.md)",
+    "wordCount": "Word Count",
+    "charCount": "Char Count"
   }
 }

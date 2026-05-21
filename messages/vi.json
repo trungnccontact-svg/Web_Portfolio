@@ -7,7 +7,8 @@
     "skills": "Kỹ năng",
     "education": "Học vấn",
     "contact": "Liên hệ",
-    "ai-job-agent": "AI Job Agent"
+    "ai-job-agent": "AI Job Agent",
+    "notepad": "Sổ ghi chép"
   },
   "hero": {
     "greeting": "Xin chào, tôi là",
@@ -208,5 +209,31 @@
   "footer": {
     "designed": "Thiết kế & Xây dựng bởi Nguyễn Chí Trung",
     "rights": "Tất cả quyền được bảo lưu"
+  },
+  "notepad": {
+    "title": "Sổ Ghi Chép Tương Tác",
+    "search": "Tìm kiếm ghi chú...",
+    "newNote": "Ghi chú mới",
+    "words": "từ",
+    "chars": "ký tự",
+    "save": "Lưu",
+    "saved": "Đã lưu!",
+    "delete": "Xóa",
+    "export": "Xuất file",
+    "editMode": "Chỉnh sửa",
+    "previewMode": "Xem trước",
+    "splitMode": "Chia đôi",
+    "untitled": "Ghi chú chưa đặt tên",
+    "emptyState": "Hãy tạo ghi chú mới hoặc chọn một ghi chú sẵn có để bắt đầu!",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa ghi chú này không?",
+    "personal": "Cá nhân",
+    "work": "Công việc",
+    "ideas": "Ý tưởng",
+    "scratchpad": "Nháp",
+    "allNotes": "Tất cả",
+    "exportTxt": "Xuất dạng Văn bản (.txt)",
+    "exportMd": "Xuất dạng Markdown (.md)",
+    "wordCount": "Số từ",
+    "charCount": "Số ký tự"
   }
 }

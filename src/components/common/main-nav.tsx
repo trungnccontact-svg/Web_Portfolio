@@ -139,6 +139,25 @@ export function MainNav() {
             {t("ai-job-agent")}
           </Link>
         </motion.div>
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={navItemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+        >
+          <Link
+            href={`/${pathname.split('/')[1] || 'en'}/notepad`}
+            className={cn(
+              "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm cursor-pointer",
+              pathname.includes('/notepad')
+                ? "text-foreground"
+                : "text-foreground/60"
+            )}
+          >
+            {t("notepad")}
+          </Link>
+        </motion.div>
       </nav>
       <motion.button
         className="flex items-center space-x-2 md:hidden"

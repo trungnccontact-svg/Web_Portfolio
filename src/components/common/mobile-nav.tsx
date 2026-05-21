@@ -2,6 +2,9 @@
 
 import { Norican } from "next/font/google";
 import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { siteConfig } from "@/config/site";
 import { useLockBody } from "@/hooks/use-lock-body";
@@ -18,10 +21,14 @@ const norican = Norican({
   style: ["normal"],
   subsets: ["latin"],
   display: "swap",
-});
+  maxDuration: 30, // nextjs font opt
+} as any);
 
 export function MobileNav({ items, onItemClick, activeSection }: MobileNavProps) {
   useLockBody();
+  const pathname = usePathname();
+  const t = useTranslations("nav");
+  const localePrefix = pathname.split('/')[1] || 'en';
 
   return (
     <div
@@ -51,6 +58,25 @@ export function MobileNav({ items, onItemClick, activeSection }: MobileNavProps)
               {item.title}
             </button>
           ))}
+          <div className="h-px bg-border my-2" />
+          <Link
+            href={`/${localePrefix}/ai-job-agent`}
+            className={cn(
+              "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline cursor-pointer",
+              pathname.includes('/ai-job-agent') ? "text-foreground font-bold" : "text-foreground/60"
+            )}
+          >
+            {t("ai-job-agent")}
+          </Link>
+          <Link
+            href={`/${localePrefix}/notepad`}
+            className={cn(
+              "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline cursor-pointer",
+              pathname.includes('/notepad') ? "text-foreground font-bold" : "text-foreground/60"
+            )}
+          >
+            {t("notepad")}
+          </Link>
         </nav>
       </div>
     </div>
