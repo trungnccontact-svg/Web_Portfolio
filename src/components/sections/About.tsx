@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { MapPin, Phone, Mail, User } from "lucide-react";
+import Image from "next/image";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { AnimatedSection } from "@/components/common/animated-section";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -22,10 +23,15 @@ export default function About() {
           <div className="grid md:grid-cols-12 gap-8 items-start w-full">
             {/* Avatar card */}
             <div className="md:col-span-4 flex justify-center">
-              <Card className="overflow-hidden border-2 border-border shadow-xl w-full max-w-[300px]">
+              <Card className="overflow-hidden border-2 border-border shadow-xl w-full max-w-[300px] group hover:border-primary/40 transition-colors duration-300">
                 <CardContent className="p-0">
-                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                    <User size={120} className="text-primary/20" />
+                  <div className="aspect-square bg-muted relative overflow-hidden">
+                    <Image
+                      src="/images/avatar.png"
+                      alt="Nguyen Chi Trung"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
                 </CardContent>
               </Card>

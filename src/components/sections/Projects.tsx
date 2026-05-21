@@ -19,6 +19,7 @@ interface ProjectItem {
   appStoreUser?: string;
   appStoreBusiness?: string;
   bullets: string[];
+  image?: string;
 }
 
 function ProjectCard({ project }: { project: ProjectItem }) {
@@ -26,10 +27,20 @@ function ProjectCard({ project }: { project: ProjectItem }) {
     <Card className="flex flex-col h-full overflow-hidden border border-border bg-card transition-all hover:shadow-lg hover:border-primary/20 group">
       <CardHeader className="p-0">
         <div className="relative aspect-video overflow-hidden bg-muted flex items-center justify-center">
-          <div className="text-muted-foreground/20 italic font-heading text-xl group-hover:scale-110 transition-transform duration-500">
-            {project.name}
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+          {project.image ? (
+            <Image
+              src={project.image}
+              alt={project.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="text-muted-foreground/20 italic font-heading text-xl group-hover:scale-110 transition-transform duration-500">
+              {project.name}
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
              <div className="flex gap-2">
                {project.stack.slice(0, 3).map(s => <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>)}
              </div>

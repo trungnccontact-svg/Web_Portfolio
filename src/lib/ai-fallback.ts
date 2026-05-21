@@ -29,6 +29,112 @@ const failedModels: Map<string, number> = new Map();
 const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown per failed model
 
 /**
+ * Self-healing JSON repair parser.
+ * Automatically closes unclosed quotes, brackets, braces, and fixes mismatched brackets/braces
+ * (e.g., when a model closes an array with '}' instead of ']').
+ */
+export function repairJSON(raw: string): string {
+  let str = raw.trim();
+
+  // Find the first opening curly brace or bracket
+  const firstBrace = str.indexOf('{');
+  const firstBracket = str.indexOf('[');
+  
+  const startIdx = Math.min(
+    firstBrace === -1 ? Infinity : firstBrace,
+    firstBracket === -1 ? Infinity : firstBracket
+  );
+  
+  if (startIdx === Infinity) return '{}';
+  
+  str = str.substring(startIdx);
+
+  let openBraces = 0;
+  let openBrackets = 0;
+  let inString = false;
+  let escape = false;
+  let correctedStr = "";
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    
+    if (escape) {
+      escape = false;
+      correctedStr += char;
+      continue;
+    }
+    if (char === '\\') {
+      escape = true;
+      correctedStr += char;
+      continue;
+    }
+    if (char === '"') {
+      inString = !inString;
+      correctedStr += char;
+      continue;
+    }
+    if (inString) {
+      correctedStr += char;
+      continue;
+    }
+
+    if (char === '{') {
+      openBraces++;
+      correctedStr += char;
+    } else if (char === '}') {
+      if (openBrackets > 0 && openBraces <= 1) {
+        // Mismatched bracket close: replaced with ']'
+        correctedStr += ']';
+        openBrackets--;
+      } else {
+        openBraces--;
+        correctedStr += char;
+      }
+    } else if (char === '[') {
+      openBrackets++;
+      correctedStr += char;
+    } else if (char === ']') {
+      openBrackets--;
+      correctedStr += char;
+    } else {
+      correctedStr += char;
+    }
+  }
+
+  // Auto-close string quotes if truncated
+  if (inString) {
+    correctedStr += '"';
+  }
+  // Auto-balance remaining brackets & braces
+  while (openBrackets > 0) {
+    correctedStr += ']';
+    openBrackets--;
+  }
+  while (openBraces > 0) {
+    correctedStr += '}';
+    openBraces--;
+  }
+
+  return correctedStr;
+}
+
+/**
+ * Clean and extract a valid JSON substring from an AI response.
+ * Handles backticks, markdown wraps, leading/trailing explanations, etc.
+ */
+export function extractJSONString(content: string): string {
+  let cleaned = content.trim();
+  
+  // 1. Remove markdown code block markers if they exist at start/end
+  cleaned = cleaned.replace(/^```(?:json)?\s*/i, "");
+  cleaned = cleaned.replace(/\s*```$/, "");
+  
+  // 2. Self-heal and repair JSON string structures
+  return repairJSON(cleaned);
+}
+
+
+/**
  * Check if a model is currently in cooldown (recently failed)
  */
 function isModelAvailable(modelId: string): boolean {
@@ -167,32 +273,16 @@ export async function callAIWithFallback(options: AICallOptions): Promise<string
       }
 
       // If rawText mode, return as-is
-      if (options.rawText) {
-        return content.trim();
+      // Otherwise, attempt JSON extraction & validation
+      const extracted = extractJSONString(content);
+      try {
+        JSON.parse(extracted);
+        return extracted;
+      } catch (parseErr: any) {
+        markModelFailed(model);
+        errors.push(`[${model}] Invalid JSON output: ${parseErr.message}`);
+        continue;
       }
-
-      // Otherwise, attempt JSON extraction (for structured responses)
-      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-      if (jsonMatch) {
-        content = jsonMatch[1];
-      } else {
-        const firstBrace = content.indexOf("{");
-        const firstBracket = content.indexOf("[");
-        const lastBrace = content.lastIndexOf("}");
-        const lastBracket = content.lastIndexOf("]");
-
-        const firstValidIdx = Math.min(
-          firstBrace === -1 ? Infinity : firstBrace,
-          firstBracket === -1 ? Infinity : firstBracket
-        );
-        const lastValidIdx = Math.max(lastBrace, lastBracket);
-
-        if (firstValidIdx !== Infinity && lastValidIdx !== -1) {
-          content = content.substring(firstValidIdx, lastValidIdx + 1);
-        }
-      }
-
-      return content;
 
     } catch (err: any) {
       // Network error or unexpected failure
@@ -224,4 +314,135 @@ export function getAIFallbackStatus() {
     availableModels: available,
     cooldownModels: coolingDown,
   };
+}
+
+// Free vision models ranked by quality & real-world reliability
+const FREE_VISION_MODELS = [
+  "nvidia/nemotron-nano-12b-v2-vl:free",
+  "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "google/gemma-4-31b-it:free",
+];
+
+export interface AIVisionOptions {
+  systemPrompt: string;
+  userMessage: string;
+  base64Image: string; // The data URL, e.g. "data:image/png;base64,..."
+  rawText?: boolean;
+}
+
+/**
+ * Call a free Vision AI model with automatic fallback rotation.
+ * Tries each available vision model in ranked order.
+ */
+export async function callAIVisionWithFallback(options: AIVisionOptions): Promise<string> {
+  const apiKey = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("Missing OpenRouter API Key. Set NEXT_PUBLIC_OPENROUTER_API_KEY in .env.local");
+
+  const availableVisionModels = FREE_VISION_MODELS.filter(isModelAvailable);
+  let modelsToTry = availableVisionModels;
+
+  if (modelsToTry.length === 0) {
+    // If all are in cooldown, clear cooldowns for these vision models
+    for (const model of FREE_VISION_MODELS) {
+      failedModels.delete(model);
+    }
+    modelsToTry = [...FREE_VISION_MODELS];
+  }
+
+  const errors: string[] = [];
+
+  for (const model of modelsToTry) {
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: options.systemPrompt },
+            {
+              role: "user",
+              content: [
+                { type: "text", text: options.userMessage },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: options.base64Image
+                  }
+                }
+              ]
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error?.message || errorMessage;
+        } catch {
+          // Ignore
+        }
+
+        if (isRetryableError(response.status, errorMessage)) {
+          markModelFailed(model);
+          errors.push(`[${model}] ${errorMessage}`);
+          continue;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      let content = data.choices?.[0]?.message?.content || "";
+
+      if (!content || content.trim() === "") {
+        markModelFailed(model);
+        errors.push(`[${model}] Empty response`);
+        continue;
+      }
+
+      if (options.rawText) {
+        return content.trim();
+      }
+
+      // JSON extraction & validation
+      const extracted = extractJSONString(content);
+      try {
+        const parsed = JSON.parse(extracted);
+        
+        // Strict Schema Validation: Enforce required fields for scanning sheets
+        if (
+          typeof parsed !== "object" ||
+          parsed === null ||
+          !("transcription" in parsed) ||
+          !("vocabulary" in parsed) ||
+          !("grammar" in parsed)
+        ) {
+          throw new Error("Missing required JSON fields: transcription, vocabulary, or grammar");
+        }
+        
+        return extracted;
+      } catch (parseErr: any) {
+        markModelFailed(model);
+        errors.push(`[${model}] Invalid JSON output: ${parseErr.message}`);
+        continue;
+      }
+
+    } catch (err: any) {
+      if (err.message && !err.message.includes("Missing OpenRouter")) {
+        markModelFailed(model);
+        errors.push(`[${model}] ${err.message}`);
+        continue;
+      }
+      throw err;
+    }
+  }
+
+  throw new Error(
+    `All free Vision AI models failed. Tried ${errors.length} models:\n${errors.join("\n")}\n\nPlease try again in a few minutes.`
+  );
 }

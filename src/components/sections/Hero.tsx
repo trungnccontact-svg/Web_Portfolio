@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Download, Mail, User } from "lucide-react";
+import Image from "next/image";
+import { Download, Mail } from "lucide-react";
 import { AnimatedSection } from "@/components/common/animated-section";
 import { AnimatedText } from "@/components/common/animated-text";
 import { Button } from "@/components/ui/button";
@@ -134,8 +135,15 @@ export default function Hero() {
       <canvas ref={canvasRef} className="particles-canvas opacity-30" />
       
       <AnimatedSection className="container relative z-10 flex flex-col items-center justify-center space-y-8 text-center py-20">
-        <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-border bg-muted flex items-center justify-center shadow-xl">
-          <User size={64} className="text-muted-foreground/50" />
+        <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-primary/20 bg-card flex items-center justify-center shadow-xl group hover:border-primary/60 transition-all duration-300">
+          <Image
+            src="/images/avatar.png"
+            alt="Nguyen Chi Trung"
+            width={112}
+            height={112}
+            className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+            priority
+          />
         </div>
         
         <div className="space-y-4">

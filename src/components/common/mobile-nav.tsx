@@ -77,6 +77,15 @@ export function MobileNav({ items, onItemClick, activeSection }: MobileNavProps)
           >
             {t("notepad")}
           </Link>
+          <Link
+            href={`/${localePrefix}/english`}
+            className={cn(
+              "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline cursor-pointer",
+              pathname.includes('/english') ? "text-foreground font-bold" : "text-foreground/60"
+            )}
+          >
+            {t("english")}
+          </Link>
         </nav>
       </div>
     </div>
