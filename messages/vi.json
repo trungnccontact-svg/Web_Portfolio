@@ -8,8 +8,11 @@
     "education": "Học vấn",
     "contact": "Liên hệ",
     "ai-job-agent": "AI Job Agent",
+    "ai-lab": "Phòng Lab AI",
     "notepad": "Sổ ghi chép",
-    "english": "Học tiếng Anh"
+    "english": "Học tiếng Anh",
+    "chess": "Chơi Cờ vua",
+    "nasa": "Vũ Trụ NASA"
   },
   "hero": {
     "greeting": "Xin chào, tôi là",
@@ -346,5 +349,28 @@
     "readAllBtn": "Đọc toàn bộ thẻ",
     "readingAll": "Đang đọc...",
     "expressionLabel": "Cụm từ / Mẫu câu"
+  },
+  "chess": {
+    "title": "Kỳ đài Cờ vua AI Cao cấp",
+    "subtitle": "Quyết đấu với AI có khả năng tự thích ứng, học hỏi từ các trận thua và khiêu khích bạn theo thời gian thực.",
+    "aiDifficulty": "Cấp độ AI",
+    "vsAi": "Chí Trung vs Chiến binh AI",
+    "playerTurn": "Lượt của bạn (Quân Trắng)",
+    "aiTurn": "AI đang tính toán nước đi...",
+    "difficultyEasy": "Kỳ thủ mới (Độ sâu Minimax 1)",
+    "difficultyMedium": "Thách đấu (Độ sâu Minimax 2)",
+    "difficultyHard": "Đại kiện tướng (Độ sâu Minimax 3)",
+    "restartGame": "Làm mới bàn cờ",
+    "aiThoughtBubble": "Suy nghĩ chiến thuật của AI",
+    "evaluation": "Đánh giá thế trận",
+    "capturedPieces": "Quân cờ đã bắt",
+    "moveHistory": "Biên bản nước đi",
+    "perspective3d": "Bật/Tắt Góc nhìn 3D",
+    "victory": "Chiếu bí! Bạn đã chiến thắng!",
+    "defeat": "Chiếu bí! AI đã giành chiến thắng.",
+    "draw": "Hòa cờ (Hòa pat / Lặp lại nước đi).",
+    "learningDatabase": "Cơ sở dữ liệu chiến tranh (TiDB)",
+    "databaseConnected": "Đã kết nối & Đang tự thích ứng",
+    "databaseOffline": "Đang dùng Bộ nhớ Cục bộ"
   }
 }

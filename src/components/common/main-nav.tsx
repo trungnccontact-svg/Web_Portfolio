@@ -128,11 +128,35 @@ export function MainNav() {
             whileTap={{ scale: 0.95 }}
         >
           <Link
+            href={`/${pathname.split('/')[1] || 'en'}/ai-lab`}
+            className={cn(
+              "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm cursor-pointer",
+              pathname.includes('/ai-lab')
+                ? "text-foreground font-bold animate-pulse"
+                : "text-foreground/60"
+            )}
+          >
+            {t("ai-lab")}
+            <span className="ml-1.5 flex h-2 w-2 relative shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="ml-1 text-[8.5px] uppercase font-bold text-emerald-400 tracking-wider shrink-0">Live</span>
+          </Link>
+        </motion.div>
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={navItemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+        >
+          <Link
             href={`/${pathname.split('/')[1] || 'en'}/ai-job-agent`}
             className={cn(
               "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm cursor-pointer",
               pathname.includes('/ai-job-agent')
-                ? "text-foreground"
+                ? "text-foreground font-bold"
                 : "text-foreground/60"
             )}
           >
@@ -175,6 +199,44 @@ export function MainNav() {
             )}
           >
             {t("english")}
+          </Link>
+        </motion.div>
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={navItemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+        >
+          <Link
+            href={`/${pathname.split('/')[1] || 'en'}/chess`}
+            className={cn(
+              "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm cursor-pointer",
+              pathname.includes('/chess')
+                ? "text-foreground"
+                : "text-foreground/60"
+            )}
+          >
+            {t("chess")}
+          </Link>
+        </motion.div>
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={navItemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+        >
+          <Link
+            href={`/${pathname.split('/')[1] || 'en'}/nasa`}
+            className={cn(
+              "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm cursor-pointer",
+              pathname.includes('/nasa')
+                ? "text-foreground"
+                : "text-foreground/60"
+            )}
+          >
+            {t("nasa")}
           </Link>
         </motion.div>
       </nav>

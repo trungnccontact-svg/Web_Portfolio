@@ -6,8 +6,9 @@
  * Tracks cooldowns per model to avoid re-hitting dead endpoints within a window.
  */
 
-// Free models ranked by quality for text generation tasks (best first)
+// Free models ranked by quality for text generation tasks (best first), with ultra-cheap paid fallbacks at the end
 const FREE_MODELS = [
+  "meta-llama/llama-3.2-3b-instruct:free",
   "deepseek/deepseek-v4-flash:free",
   "meta-llama/llama-3.3-70b-instruct:free",
   "nousresearch/hermes-3-llama-3.1-405b:free",
@@ -22,6 +23,11 @@ const FREE_MODELS = [
   "minimax/minimax-m2.5:free",
   "nvidia/nemotron-3-nano-30b-a3b:free",
   "openai/gpt-oss-20b:free",
+  "openrouter/free",
+  // Ultra-cheap paid text fallbacks (under $0.15/1M tokens) when free models fail or rate limit is hit
+  "meta-llama/llama-3.1-8b-instruct",
+  "qwen/qwen-2.5-7b-instruct",
+  "google/gemma-3-12b-it"
 ];
 
 // Cooldown tracking: model ID -> timestamp when it failed (cooldown for 5 minutes)
@@ -169,6 +175,8 @@ function getAvailableModels(): string[] {
 function isRetryableError(status: number, errorMessage: string): boolean {
   // Rate limited
   if (status === 429) return true;
+  // Payment required / insufficient credits — skip to next model
+  if (status === 402) return true;
   // Server/provider errors
   if (status === 502 || status === 503 || status === 504) return true;
   // No endpoints found
@@ -179,6 +187,8 @@ function isRetryableError(status: number, errorMessage: string): boolean {
   if (errorMessage.includes("not found")) return true;
   // Overloaded
   if (errorMessage.includes("overloaded") || errorMessage.includes("capacity")) return true;
+  // Insufficient credits / balance
+  if (errorMessage.includes("Insufficient") || errorMessage.includes("credit") || errorMessage.includes("balance")) return true;
 
   return false;
 }
@@ -190,6 +200,31 @@ export interface AICallOptions {
   rawText?: boolean;
   /** Optional preferred model to prioritize first before falling back to the pool */
   preferredModel?: string;
+}
+
+/**
+ * Helper to construct a SHORT, user-friendly error message for toast display.
+ * Full technical logs are sent to console.error separately.
+ */
+function formatFallbackError(errors: string[], isVision: boolean): { shortMessage: string; technicalLog: string } {
+  const isRateLimited = errors.some(e => e.includes("free-models-per-day") || e.includes("Rate limit exceeded") || e.includes("429"));
+  const isPaymentRequired = errors.some(e => e.includes("402") || e.includes("Payment Required") || e.includes("Credit balance too low") || e.includes("Insufficient") || e.includes("payment_required") || e.includes("credit"));
+
+  const technicalLog = `[AI Fallback] All ${errors.length} ${isVision ? "vision" : "text"} models failed:\n` + errors.map(e => `  • ${e}`).join("\n");
+
+  let shortMessage: string;
+
+  if (isRateLimited && isPaymentRequired) {
+    shortMessage = "Daily free AI quota exceeded and no paid credits available. Add credits at openrouter.ai or try again later.";
+  } else if (isRateLimited) {
+    shortMessage = "Daily free AI quota exceeded. Add $10 credit at openrouter.ai to unlock 1,000 free requests/day, or try again later.";
+  } else if (isPaymentRequired) {
+    shortMessage = "Insufficient OpenRouter credits. Add credits at openrouter.ai to enable paid fallback models.";
+  } else {
+    shortMessage = `All ${isVision ? "vision" : ""} AI models are temporarily unavailable. Please check your internet connection and try again.`;
+  }
+
+  return { shortMessage, technicalLog };
 }
 
 /**
@@ -273,6 +308,10 @@ export async function callAIWithFallback(options: AICallOptions): Promise<string
       }
 
       // If rawText mode, return as-is
+      if (options.rawText) {
+        return content.trim();
+      }
+
       // Otherwise, attempt JSON extraction & validation
       const extracted = extractJSONString(content);
       try {
@@ -295,10 +334,10 @@ export async function callAIWithFallback(options: AICallOptions): Promise<string
     }
   }
 
-  // All models exhausted
-  throw new Error(
-    `All free AI models failed. Tried ${errors.length} models:\n${errors.join("\n")}\n\nPlease try again in a few minutes.`
-  );
+  // All models exhausted — log full details, throw short message for toast
+  const { shortMessage, technicalLog } = formatFallbackError(errors, false);
+  console.error(technicalLog);
+  throw new Error(shortMessage);
 }
 
 /**
@@ -316,11 +355,15 @@ export function getAIFallbackStatus() {
   };
 }
 
-// Free vision models ranked by quality & real-world reliability
+// Free vision models ranked by quality & real-world reliability, with ultra-cheap paid fallbacks at the end
 const FREE_VISION_MODELS = [
   "nvidia/nemotron-nano-12b-v2-vl:free",
   "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
   "google/gemma-4-31b-it:free",
+  // Ultra-cheap paid vision fallbacks (under $0.25/1M tokens) when free models fail or rate limit is hit
+  "google/gemma-3-12b-it",
+  "google/gemini-2.0-flash-001",
+  "meta-llama/llama-3.2-11b-vision-instruct"
 ];
 
 export interface AIVisionOptions {
@@ -442,7 +485,8 @@ export async function callAIVisionWithFallback(options: AIVisionOptions): Promis
     }
   }
 
-  throw new Error(
-    `All free Vision AI models failed. Tried ${errors.length} models:\n${errors.join("\n")}\n\nPlease try again in a few minutes.`
-  );
+  // All vision models exhausted — log full details, throw short message for toast
+  const { shortMessage, technicalLog } = formatFallbackError(errors, true);
+  console.error(technicalLog);
+  throw new Error(shortMessage);
 }

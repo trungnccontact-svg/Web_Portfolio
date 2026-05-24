@@ -1519,7 +1519,7 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                                 <div className="flex justify-end mb-2">
                                   <Button
                                     variant="outline"
-                                    size="xs"
+                                    size="sm"
                                     onClick={() => handleAIExpandAllWords(selectedSheet.id)}
                                     disabled={isExpandingAll}
                                     className="bg-emerald-500/5 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 text-[10px] h-7"
@@ -1713,7 +1713,7 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                                       </Badge>
                                       <Button 
                                         variant="outline" 
-                                        size="xs" 
+                                        size="sm" 
                                         className="h-7 text-[10px] rounded-md"
                                         onClick={() => handleStartPractice(g)}
                                       >
@@ -1823,7 +1823,7 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                             </div>
                             <div className="pt-2 border-t border-border/10">
                               <span className="font-semibold text-emerald-400 mr-2">{t("suggestAlternative")}:</span>
-                              <p className="text-emerald-400 mt-0.5 italic">"{sentenceFeedback.suggestAlternative}"</p>
+                              <p className="text-emerald-400 mt-0.5 italic">"{sentenceFeedback.suggestedAlternative}"</p>
                             </div>
                           </div>
                         </motion.div>
@@ -2082,7 +2082,7 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                       <CardFooter className="p-4 border-t border-border/20 bg-muted/5 flex justify-end">
                         <Button 
                           variant="secondary" 
-                          size="xs" 
+                          size="sm" 
                           className="h-7 text-[10px]"
                           onClick={() => {
                             // Find the sheet containing this grammar to open its workspace
@@ -2168,7 +2168,7 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                                 key={type}
                                 type="button"
                                 variant={noteType === type ? "default" : "outline"}
-                                size="xs"
+                                size="sm"
                                 className="capitalize text-[10px] h-7"
                                 onClick={() => setNoteType(type as any)}
                               >
@@ -2280,7 +2280,7 @@ Return ONLY the JSON string. Do not wrap in markdown code blocks.`;
                             </div>
                             <Button 
                               variant="ghost" 
-                              size="xs" 
+                              size="sm" 
                               onClick={() => handleDeleteNotepadItem(item.id)}
                               className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
                             >

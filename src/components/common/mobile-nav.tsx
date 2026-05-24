@@ -60,6 +60,20 @@ export function MobileNav({ items, onItemClick, activeSection }: MobileNavProps)
           ))}
           <div className="h-px bg-border my-2" />
           <Link
+            href={`/${localePrefix}/ai-lab`}
+            className={cn(
+              "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline cursor-pointer gap-1.5",
+              pathname.includes('/ai-lab') ? "text-foreground font-bold" : "text-foreground/60"
+            )}
+          >
+            {t("ai-lab")}
+            <span className="flex h-2 w-2 relative shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="text-[8.5px] uppercase font-bold text-emerald-400 tracking-wider">Live</span>
+          </Link>
+          <Link
             href={`/${localePrefix}/ai-job-agent`}
             className={cn(
               "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline cursor-pointer",
@@ -85,6 +99,24 @@ export function MobileNav({ items, onItemClick, activeSection }: MobileNavProps)
             )}
           >
             {t("english")}
+          </Link>
+          <Link
+            href={`/${localePrefix}/chess`}
+            className={cn(
+              "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline cursor-pointer",
+              pathname.includes('/chess') ? "text-foreground font-bold" : "text-foreground/60"
+            )}
+          >
+            {t("chess")}
+          </Link>
+          <Link
+            href={`/${localePrefix}/nasa`}
+            className={cn(
+              "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline cursor-pointer",
+              pathname.includes('/nasa') ? "text-foreground font-bold" : "text-foreground/60"
+            )}
+          >
+            {t("nasa")}
           </Link>
         </nav>
       </div>

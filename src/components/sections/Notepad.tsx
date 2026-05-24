@@ -15,7 +15,13 @@ import {
   ChevronRight,
   Wand2,
   Undo2,
-  Loader2
+  Loader2,
+  Bold,
+  Italic,
+  Code,
+  Image,
+  HelpCircle,
+  Clipboard
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
@@ -26,6 +32,7 @@ interface Note {
   content: string;
   originalContent: string | null; // Stores the pre-AI content for revert
   createdAt: string;
+  images?: Record<string, string>; // Maps image placeholders to base64
 }
 
 // Resilient AI call with auto-fallback rotation
@@ -36,6 +43,81 @@ async function callAIEnhance(noteContent: string): Promise<string> {
     rawText: true,
     preferredModel: "deepseek/deepseek-v4-flash:free"
   });
+}
+
+// Helper to parse content and render inline images for markdown images
+function parseContentWithImages(content: string, noteImages: Record<string, string> = {}, isPreview = false) {
+  if (!content) return [];
+  
+  // Regex to match markdown image format: ![alt](data:image/... or http...) or ![alt]
+  const mdRegex = /!\[([^\]]*)\](?:\(([^)]+)\))?/g;
+  
+  const elements: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+  let keyCounter = 0;
+
+  while ((match = mdRegex.exec(content)) !== null) {
+    const matchIndex = match.index;
+    const [fullMatch, altText, imgUrl] = match;
+
+    // Add preceding text
+    if (matchIndex > lastIndex) {
+      elements.push(
+        <span key={`text-${keyCounter++}`}>
+          {content.substring(lastIndex, matchIndex)}
+        </span>
+      );
+    }
+
+    // Determine the actual image source
+    let resolvedSrc = "";
+    if (noteImages && noteImages[altText]) {
+      resolvedSrc = noteImages[altText];
+    } else if (imgUrl) {
+      resolvedSrc = imgUrl;
+    }
+
+    if (resolvedSrc) {
+      // Add image element
+      elements.push(
+        <div 
+          key={`img-${keyCounter++}`} 
+          className={cn(
+            "my-3 relative group/img overflow-hidden rounded-xl border border-white/10 bg-black/20 flex justify-center",
+            isPreview ? "max-h-[350px]" : "max-h-[160px]"
+          )}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src={resolvedSrc} 
+            alt={altText || "Embedded Image"} 
+            className={cn(
+              "w-full rounded-xl transition-all duration-300",
+              isPreview 
+                ? "max-h-[350px] object-contain shadow-lg" 
+                : "max-h-[160px] object-cover group-hover/img:scale-105"
+            )}
+          />
+        </div>
+      );
+    } else {
+      elements.push(<span key={`text-${keyCounter++}`}>{fullMatch}</span>);
+    }
+
+    lastIndex = mdRegex.lastIndex;
+  }
+
+  // Add remaining text
+  if (lastIndex < content.length) {
+    elements.push(
+      <span key={`text-${keyCounter++}`}>
+        {content.substring(lastIndex)}
+      </span>
+    );
+  }
+
+  return elements.length > 0 ? elements : [content];
 }
 
 const containerVariants = {
@@ -209,10 +291,10 @@ function GameNoteCard({
         </div>
 
         {/* Note content */}
-        <div className="p-5 flex-1 select-text z-10">
-          <p className="text-foreground/85 font-sans text-sm leading-relaxed whitespace-pre-wrap text-left line-clamp-6 select-text selection:bg-primary/20">
-            {note.content}
-          </p>
+        <div className="p-5 flex-1 select-text z-10 overflow-hidden">
+          <div className="text-foreground/85 font-sans text-sm leading-relaxed whitespace-pre-wrap text-left line-clamp-6 select-text selection:bg-primary/20">
+            {parseContentWithImages(note.content, note.images || {}, false)}
+          </div>
         </div>
 
         {/* Actions footer */}
@@ -289,8 +371,52 @@ export function Notepad() {
   const [copiedNoteId, setCopiedNoteId] = React.useState<string | null>(null);
   const [aiLoadingNoteId, setAiLoadingNoteId] = React.useState<string | null>(null);
 
-  // Load notes from localStorage on mount
+  const [editTab, setEditTab] = React.useState<"edit" | "preview">("edit");
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [editorImages, setEditorImages] = React.useState<Record<string, string>>({});
+
+  // RESILIENT TIDB STATES
+  const [dbStatus, setDbStatus] = React.useState<"checking" | "connected" | "offline">("checking");
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const [customDbUrl, setCustomDbUrl] = React.useState("");
+  const [isTestingConnection, setIsTestingConnection] = React.useState(false);
+  const [testError, setTestError] = React.useState<string | null>(null);
+  const [testSuccess, setTestSuccess] = React.useState(false);
+
+  // Connection tester helper
+  const checkDbConnection = async (urlToCheck?: string) => {
+    setDbStatus("checking");
+    try {
+      const url = urlToCheck !== undefined ? urlToCheck : (localStorage.getItem("tidb_connection_url") || "");
+      const res = await fetch("/api/notepad/test-connection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tidbUrl: url })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setDbStatus("connected");
+        return true;
+      } else {
+        setDbStatus("offline");
+        return false;
+      }
+    } catch (err) {
+      setDbStatus("offline");
+      return false;
+    }
+  };
+
+  // Load notes and database settings on mount
   React.useEffect(() => {
+    // 1. Load custom DB URL
+    const savedUrl = localStorage.getItem("tidb_connection_url") || "";
+    setCustomDbUrl(savedUrl);
+
+    // 2. Ping DB connection
+    checkDbConnection(savedUrl);
+
+    // 3. Load notes
     const savedNotes = localStorage.getItem("portfolio_custom_notepad_notes_list");
     setTimeout(() => {
       if (savedNotes !== null) {
@@ -328,24 +454,136 @@ export function Notepad() {
   const handleCreateNew = () => {
     setActiveNoteId(null);
     setContent("");
+    setEditTab("edit");
+    setEditorImages({});
     setViewState("edit");
   };
 
   const handleEditNote = (note: Note) => {
     setActiveNoteId(note.id);
     setContent(note.content);
+    setEditTab("edit");
+    setEditorImages(note.images || {});
     setViewState("edit");
   };
 
-  const handleDeleteNote = (id: string) => {
+  // Safe credentials test
+  const handleTestConnection = async () => {
+    setIsTestingConnection(true);
+    setTestError(null);
+    setTestSuccess(false);
+
+    try {
+      const res = await fetch("/api/notepad/test-connection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tidbUrl: customDbUrl })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTestSuccess(true);
+        setDbStatus("connected");
+        toast({
+          title: "🟢 Connection Verified",
+          description: "Database credentials are correct and responsive!",
+        });
+      } else {
+        setTestError(data.error || "Connection failed.");
+        setDbStatus("offline");
+      }
+    } catch (err: any) {
+      setTestError(err.message || "Network error. Failed to connect.");
+      setDbStatus("offline");
+    } finally {
+      setIsTestingConnection(false);
+    }
+  };
+
+  // Save custom credentials
+  const handleSaveConnectionSettings = () => {
+    localStorage.setItem("tidb_connection_url", customDbUrl.trim());
+    toast({
+      title: "💾 Settings Saved",
+      description: "Database credentials updated successfully.",
+    });
+    checkDbConnection(customDbUrl.trim());
+    setIsSettingsOpen(false);
+  };
+
+  // Reset to default credentials
+  const handleResetConnectionSettings = () => {
+    localStorage.removeItem("tidb_connection_url");
+    setCustomDbUrl("");
+    toast({
+      title: "🔄 Reset Complete",
+      description: "Reverted to default system database environment configuration.",
+    });
+    checkDbConnection("");
+    setIsSettingsOpen(false);
+  };
+
+  const handleDeleteNote = async (id: string) => {
+    const noteToDelete = notes.find((n) => n.id === id);
+    if (!noteToDelete) return;
+
     if (confirm("Are you sure you want to delete this note?")) {
+      // 1. Immediately update UI locally for a premium, fast experience
       const updated = notes.filter((n) => n.id !== id);
       saveNotesList(updated);
+      
       toast({
         variant: "destructive",
         title: "Deleted",
         description: "Note removed successfully.",
       });
+
+      // 2. Safely trigger background TiDB snapshot archive request
+      try {
+        const response = await fetch("/api/notepad/snapshot", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: noteToDelete.id,
+            content: noteToDelete.content,
+            images: noteToDelete.images || {},
+            createdAt: noteToDelete.createdAt,
+            tidbUrl: localStorage.getItem("tidb_connection_url") || ""
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          if (data.savedToTiDB) {
+            toast({
+              title: "🗑️ Snapshot Archived",
+              description: "A secure backup was successfully saved to your TiDB database.",
+            });
+          } else {
+            toast({
+              title: "📂 Local Backup Saved",
+              description: "TiDB backup is offline. Snapshot was successfully saved locally in your project files.",
+            });
+          }
+        } else {
+          console.warn("[TiDB Backup] API returned non-success state:", data);
+          toast({
+            variant: "default",
+            title: "⚠️ Backup Offline",
+            description: `Note deleted locally. TiDB backup error: ${data.details || "Database is offline."}`,
+          });
+        }
+      } catch (err: any) {
+        console.error("[TiDB Backup] Failed to post snapshot to API:", err);
+        // Fallback local save already executed, but connection failed
+        toast({
+          variant: "default",
+          title: "⚠️ Backup Offline",
+          description: "Note deleted locally, but connection to TiDB backup failed.",
+        });
+      }
     }
   };
 
@@ -417,6 +655,178 @@ export function Notepad() {
     setContent(e.target.value);
   };
 
+  const handleImageInsertion = (base64: string, label = "Image") => {
+    const key = `image_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    setEditorImages((prev) => ({ ...prev, [key]: base64 }));
+
+    const textarea = document.getElementById("notepad-textarea") as HTMLTextAreaElement;
+    const imagePlaceholder = `\n![${key}]\n`;
+
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const currentText = textarea.value;
+      const newContent = currentText.substring(0, start) + imagePlaceholder + currentText.substring(end);
+      setContent(newContent);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = start + imagePlaceholder.length;
+      }, 0);
+    } else {
+      setContent((prev) => prev + imagePlaceholder);
+    }
+  };
+
+  const handlePasteFromClipboard = async () => {
+    try {
+      if (!navigator.clipboard || !navigator.clipboard.read) {
+        toast({
+          variant: "destructive",
+          title: "Not Supported",
+          description: "Your browser does not support reading clipboard directly. Try Ctrl+V!",
+        });
+        return;
+      }
+
+      const clipboardItems = await navigator.clipboard.read();
+      let imageFound = false;
+
+      for (const item of clipboardItems) {
+        for (const type of item.types) {
+          if (type.startsWith("image/")) {
+            imageFound = true;
+            const blob = await item.getType(type);
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              const base64 = event.target?.result as string;
+              if (base64) {
+                handleImageInsertion(base64, "Clipboard Image");
+                toast({
+                  title: "🖼️ Image Pasted",
+                  description: "Image successfully pasted from clipboard.",
+                });
+              }
+            };
+            reader.readAsDataURL(blob);
+            break;
+          }
+        }
+        if (imageFound) break;
+      }
+
+      if (!imageFound) {
+        toast({
+          variant: "destructive",
+          title: "No Image Found",
+          description: "No copied image found in clipboard. Copy an image first!",
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Clipboard Access Denied",
+        description: "Please allow clipboard permissions or use Ctrl+V directly.",
+      });
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of items) {
+      if (item.type.indexOf("image") !== -1) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (!file) continue;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const base64 = event.target?.result as string;
+          if (base64) {
+            handleImageInsertion(base64, "Pasted Image");
+            toast({
+              title: "🖼️ Image Pasted",
+              description: "Image successfully pasted from clipboard.",
+            });
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLTextAreaElement>) => {
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith("image/")) {
+        e.preventDefault();
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const base64 = event.target?.result as string;
+          if (base64) {
+            handleImageInsertion(base64, "Dropped Image");
+            toast({
+              title: "🖼️ Image Dropped",
+              description: "Image successfully embedded.",
+            });
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        if (base64) {
+          handleImageInsertion(base64, "Attached Image");
+          toast({
+            title: "🖼️ Image Attached",
+            description: "Image successfully attached.",
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+      e.target.value = "";
+    }
+  };
+
+  const insertMarkdown = (syntaxBefore: string, syntaxAfter = "") => {
+    const textarea = document.getElementById("notepad-textarea") as HTMLTextAreaElement;
+    if (!textarea) {
+      setContent((prev) => prev + syntaxBefore + syntaxAfter);
+      return;
+    }
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const currentText = textarea.value;
+    const selectedText = currentText.substring(start, end);
+
+    const inserted = syntaxBefore + selectedText + syntaxAfter;
+    const newContent = currentText.substring(0, start) + inserted + currentText.substring(end);
+
+    setContent(newContent);
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.selectionStart = start + syntaxBefore.length;
+      textarea.selectionEnd = start + syntaxBefore.length + selectedText.length;
+    }, 0);
+  };
+
   const handleOk = () => {
     if (content.trim() === "") {
       toast({
@@ -433,7 +843,12 @@ export function Notepad() {
     if (activeNoteId) {
       updatedNotes = notes.map((n) => {
         if (n.id === activeNoteId) {
-          return { ...n, content, createdAt: new Date().toISOString() };
+          return { 
+            ...n, 
+            content, 
+            images: editorImages, 
+            createdAt: new Date().toISOString() 
+          };
         }
         return n;
       });
@@ -443,6 +858,7 @@ export function Notepad() {
         content,
         originalContent: null,
         createdAt: new Date().toISOString(),
+        images: editorImages,
       };
       updatedNotes = [newNote, ...notes];
     }
@@ -503,13 +919,40 @@ export function Notepad() {
                   <BookOpen className="w-4 h-4 text-primary" />
                   Your Floating Popups ({notes.length})
                 </span>
-                            <motion.div 
+
+                {/* DATABASE CONNECTION STATUS BADGE */}
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setIsSettingsOpen(true)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] md:text-[11px] font-bold transition-all duration-300 active:scale-95 cursor-pointer shadow-sm select-none backdrop-blur-md",
+                      dbStatus === "checking" && "bg-white/5 border-white/10 text-muted-foreground animate-pulse",
+                      dbStatus === "connected" && "bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20 shadow-emerald-500/5",
+                      dbStatus === "offline" && "bg-amber-500/10 border-amber-500/25 text-amber-400 hover:bg-amber-500/20 shadow-amber-500/5"
+                    )}
+                    title="Configure TiDB Credentials"
+                  >
+                    <span className={cn(
+                      "w-1.5 h-1.5 rounded-full",
+                      dbStatus === "checking" && "bg-muted-foreground animate-bounce",
+                      dbStatus === "connected" && "bg-emerald-400 animate-pulse",
+                      dbStatus === "offline" && "bg-amber-400"
+                    )} />
+                    <span>
+                      {dbStatus === "checking" && "Checking DB..."}
+                      {dbStatus === "connected" && "🟢 TiDB Cloud Active"}
+                      {dbStatus === "offline" && "🟡 Local File Backup Active"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <motion.div 
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
-                
+              >                
                 {/* Add Note Trigger Card */}
                 <motion.div
                   variants={cardVariants}
@@ -556,7 +999,7 @@ export function Notepad() {
                     );
                   })}
                 </AnimatePresence>
-              </motion.div>  </div>
+              </motion.div>
             </motion.div>
           ) : (
             
@@ -569,8 +1012,8 @@ export function Notepad() {
               transition={{ duration: 0.3 }}
               className="w-full max-w-2xl mx-auto rounded-3xl border border-border/40 bg-background/40 backdrop-blur-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 focus-within:border-primary/40 focus-within:shadow-[0_0_30px_rgba(var(--primary),0.05)] border-t-primary/20"
             >
-              {/* Breadcrumb back to dashboard */}
-              <div className="px-6 py-3 border-b border-border/10 bg-background/15 flex items-center justify-between">
+              {/* Breadcrumb back to dashboard & Tabs */}
+              <div className="px-6 py-3 border-b border-border/10 bg-background/15 flex items-center justify-between flex-wrap gap-2">
                 <button
                   onClick={() => setViewState("dashboard")}
                   className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground hover:text-foreground flex items-center gap-1 select-none transition-colors cursor-pointer"
@@ -579,18 +1022,149 @@ export function Notepad() {
                   <ChevronRight className="w-3.5 h-3.5" />
                   {activeNoteId ? "Edit Note" : "New Note"}
                 </button>
+
+                {/* Edit / Preview Tabs */}
+                <div className="flex bg-background/50 border border-white/5 rounded-xl p-0.5 select-none text-[11px] font-bold">
+                  <button
+                    onClick={() => setEditTab("edit")}
+                    className={cn(
+                      "px-3.5 py-1.5 rounded-lg cursor-pointer transition-all",
+                      editTab === "edit" 
+                        ? "bg-primary text-primary-foreground shadow" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => setEditTab("preview")}
+                    className={cn(
+                      "px-3.5 py-1.5 rounded-lg cursor-pointer transition-all",
+                      editTab === "preview" 
+                        ? "bg-primary text-primary-foreground shadow" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Preview
+                  </button>
+                </div>
               </div>
 
-              {/* Textarea */}
-              <div className="p-6 md:p-8 min-h-[250px] md:min-h-[300px] flex flex-col">
-                <textarea
-                  value={content}
-                  onChange={handleInputChange}
-                  placeholder={t("emptyState") || "Type your note here..."}
-                  className="w-full flex-1 bg-transparent border-none focus:outline-none resize-none p-0 text-foreground placeholder-foreground/30 font-sans text-base md:text-lg leading-relaxed focus-visible:outline-none focus-visible:ring-0 select-text"
-                  spellCheck={false}
-                  autoFocus
+              {/* Textarea or Preview */}
+              <div className="p-6 md:p-8 min-h-[250px] md:min-h-[300px] flex flex-col flex-1 relative">
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange} 
+                  accept="image/*" 
+                  className="hidden" 
                 />
+
+                {editTab === "edit" ? (
+                  <>
+                    {/* Markdown Formatting Toolbar */}
+                    <div className="flex items-center gap-1 pb-3 mb-3 border-b border-border/10 select-none">
+                      <button
+                        type="button"
+                        onClick={() => insertMarkdown("**", "**")}
+                        className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        title="Bold text"
+                      >
+                        <Bold className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertMarkdown("*", "*")}
+                        className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        title="Italic text"
+                      >
+                        <Italic className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertMarkdown("\n```\n", "\n```\n")}
+                        className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        title="Code block"
+                      >
+                        <Code className="w-4 h-4" />
+                      </button>
+                      <span className="w-[1px] h-4 bg-border/25 mx-1" />
+                      <button
+                        type="button"
+                        onClick={handlePasteFromClipboard}
+                        className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 cursor-pointer text-xs"
+                        title="Paste image from clipboard"
+                      >
+                        <Clipboard className="w-4 h-4 text-primary animate-pulse" />
+                        <span className="hidden sm:inline">Paste Image</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 cursor-pointer text-xs"
+                        title="Attach image from local files"
+                      >
+                        <Image className="w-4 h-4" />
+                        <span className="hidden sm:inline">Attach Image</span>
+                      </button>
+
+                      {/* Helper visual tip on paste */}
+                      <span className="ml-auto text-[10px] text-muted-foreground/60 hidden md:flex items-center gap-1">
+                        <HelpCircle className="w-3 h-3 text-primary/80" />
+                        <span>Pro-tip: Paste images directly with Ctrl+V!</span>
+                      </span>
+                    </div>
+
+                    {/* Attached Images Thumbnail Row */}
+                    {Object.keys(editorImages).length > 0 && (
+                      <div className="flex flex-wrap gap-2.5 mb-4 p-2 bg-white/5 border border-white/5 rounded-2xl select-none">
+                        {Object.entries(editorImages).map(([key, base64]) => (
+                          <div key={key} className="relative group/thumb w-16 h-16 rounded-xl border border-white/10 overflow-hidden bg-black/40">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img 
+                              src={base64} 
+                              alt="Thumbnail" 
+                              className="w-full h-full object-cover"
+                            />
+                            {/* Remove button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = { ...editorImages };
+                                delete updated[key];
+                                setEditorImages(updated);
+                                setContent(prev => prev.replace(`![${key}]`, ""));
+                              }}
+                              className="absolute inset-0 bg-black/60 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity cursor-pointer font-bold text-xs"
+                              title="Remove image"
+                            >
+                              <Trash2 className="w-4 h-4 text-rose-500" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <textarea
+                      id="notepad-textarea"
+                      value={content}
+                      onChange={handleInputChange}
+                      onPaste={handlePaste}
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                      placeholder={t("emptyState") || "Type your note here..."}
+                      className="w-full flex-1 bg-transparent border-none focus:outline-none resize-none p-0 text-foreground placeholder-foreground/30 font-sans text-base md:text-lg leading-relaxed focus-visible:outline-none focus-visible:ring-0 select-text"
+                      spellCheck={false}
+                      autoFocus
+                    />
+                  </>
+                ) : (
+                  <div className="w-full flex-1 overflow-y-auto select-text max-h-[400px] pb-4">
+                    <div className="text-foreground/85 font-sans text-base leading-relaxed whitespace-pre-wrap text-left">
+                      {parseContentWithImages(content, editorImages, true)}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* OK button */}
@@ -616,6 +1190,119 @@ export function Notepad() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Resilient Settings Modal Drawer */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop Blur Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSettingsOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            />
+
+            {/* Modal Dialog Body */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", duration: 0.4 }}
+              className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#0c0f17]/90 p-6 md:p-8 shadow-2xl backdrop-blur-2xl z-10"
+            >
+              {/* Top glowing edge decoration */}
+              <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+
+              {/* Close / Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-extrabold text-foreground tracking-tight flex items-center gap-2">
+                  <span className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20">
+                    <Sparkles className="w-4 h-4" />
+                  </span>
+                  Database Settings
+                </h3>
+                <button
+                  onClick={() => setIsSettingsOpen(false)}
+                  className="p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 text-muted-foreground hover:text-foreground transition-all duration-200 cursor-pointer active:scale-95 text-xs font-bold"
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-muted-foreground/80 leading-relaxed mb-6">
+                Connect your custom <strong>TiDB Cloud Serverless</strong> cluster to archive deletes and securely back up your notes list.
+                Leave empty to fallback to the automated local files backup. Stored securely inside your browser&apos;s <code className="text-primary font-mono bg-white/5 px-1 py-0.5 rounded">localStorage</code>.
+              </p>
+
+              {/* Input section */}
+              <div className="space-y-4 mb-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">
+                    TiDB Connection URL
+                  </label>
+                  <input
+                    type="text"
+                    value={customDbUrl}
+                    onChange={(e) => setCustomDbUrl(e.target.value)}
+                    placeholder="mysql://user:pass@host:port/dbname?ssl=..."
+                    className="w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm text-foreground placeholder-muted-foreground/45 transition-colors focus:border-primary/50 focus:outline-none"
+                    spellCheck={false}
+                  />
+                </div>
+
+                {/* Connection status feedback */}
+                {isTestingConnection && (
+                  <div className="flex items-center gap-2 text-xs text-primary font-medium">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Verifying credentials live...</span>
+                  </div>
+                )}
+                {testError && (
+                  <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs leading-normal">
+                    <strong>Connection Failed:</strong> {testError}
+                  </div>
+                )}
+                {testSuccess && (
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                    🟢 Connection verified successfully! Your TiDB server is responsive and ready.
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={handleTestConnection}
+                    disabled={isTestingConnection || !customDbUrl.trim()}
+                    className="py-3 px-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40 text-xs font-extrabold tracking-wide transition-all active:scale-95 text-foreground flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    Test connection
+                  </button>
+                  <button
+                    onClick={handleSaveConnectionSettings}
+                    className="py-3 px-4 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/95 text-xs font-extrabold tracking-wide transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-primary/10"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    Save settings
+                  </button>
+                </div>
+                {customDbUrl && (
+                  <button
+                    onClick={handleResetConnectionSettings}
+                    className="py-2.5 px-4 rounded-2xl border border-destructive/15 bg-destructive/5 hover:bg-destructive/10 text-destructive text-xs font-bold transition-all active:scale-95 cursor-pointer"
+                  >
+                    Clear custom & Revert to default
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

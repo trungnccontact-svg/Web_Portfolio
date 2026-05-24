@@ -8,8 +8,11 @@
     "education": "Education",
     "contact": "Contact",
     "ai-job-agent": "AI Job Agent",
+    "ai-lab": "AI Lab",
     "notepad": "Notepad",
-    "english": "English"
+    "english": "English",
+    "chess": "Play Chess",
+    "nasa": "NASA Space"
   },
   "hero": {
     "greeting": "Hi, my name is",
@@ -346,5 +349,28 @@
     "readAllBtn": "Read Entire Card",
     "readingAll": "Reading...",
     "expressionLabel": "Expression / Sentence Pattern"
+  },
+  "chess": {
+    "title": "Grandmaster AI Chess Lounge",
+    "subtitle": "Play against an adaptive AI that learns from defeats and taunts you dynamically in real time.",
+    "aiDifficulty": "AI Level",
+    "vsAi": "Chi Trung vs AI Agent",
+    "playerTurn": "Your Turn (White)",
+    "aiTurn": "AI is planning move...",
+    "difficultyEasy": "Novice (Minimax Depth 1)",
+    "difficultyMedium": "Challenger (Minimax Depth 2)",
+    "difficultyHard": "Grandmaster (Minimax Depth 3)",
+    "restartGame": "Reset Board",
+    "aiThoughtBubble": "AI Tactical Thoughts",
+    "evaluation": "Position Evaluation",
+    "capturedPieces": "Captured Trophies",
+    "moveHistory": "Chronicle of Moves",
+    "perspective3d": "Toggle 3D View",
+    "victory": "Checkmate! Victory is yours!",
+    "defeat": "Checkmate! The AI prevails.",
+    "draw": "Draw by stalemate/repetition.",
+    "learningDatabase": "Wars Database (TiDB)",
+    "databaseConnected": "Connected & Adapting",
+    "databaseOffline": "Local Memory fallback"
   }
 }
