@@ -12,7 +12,44 @@
     "notepad": "Sổ ghi chép",
     "english": "Học tiếng Anh",
     "chess": "Chơi Cờ vua",
-    "nasa": "Vũ Trụ NASA"
+    "nasa": "Vũ Trụ NASA",
+    "claude-artifacts": "Sản phẩm Claude"
+  },
+  "artifacts": {
+    "title": "Sản phẩm Claude",
+    "description": "Thư viện prompt và công cụ tương tác AI tiêu biểu phát triển bởi Chí Trung.",
+    "developer-portfolio": {
+      "title": "Hồ sơ Lập trình viên & CV",
+      "subtitle": "Hồ sơ năng lực tương tác và CV hiển thị kinh nghiệm & công nghệ"
+    },
+    "vietnam-cv-optimizer": {
+      "title": "Tối ưu hóa CV Việt Nam",
+      "subtitle": "Bộ prompt AI để tinh chỉnh CV tối ưu cho thị trường Việt"
+    },
+    "it-market-insights": {
+      "title": "Báo cáo Thị trường IT 2026",
+      "subtitle": "18 prompt khảo sát lương, kỹ năng & xu hướng tuyển dụng"
+    },
+    "free-llm-ranker": {
+      "title": "Xếp hạng LLM Miễn phí",
+      "subtitle": "Đánh giá sức mạnh các mô hình LLM miễn phí qua OpenRouter"
+    },
+    "rsi-intelligence-hub": {
+      "title": "Cổng thông tin tự cải tiến AI",
+      "subtitle": "Theo dõi quá trình tự nâng cấp của AI và điểm bùng nổ công nghệ"
+    },
+    "vn-stock-prompts": {
+      "title": "AI Tra Cứu Chứng Khoán Việt",
+      "subtitle": "Bộ prompt hỗ trợ tra cứu và phân tích thị trường chứng khoán Việt"
+    },
+    "shopee-spending": {
+      "title": "Quản lý chi tiêu Shopee",
+      "subtitle": "Hệ thống kiểm soát ngân sách và cẩm nang chi tiêu mua sắm"
+    },
+    "english-deep-learning": {
+      "title": "Học tiếng Anh chuyên sâu",
+      "subtitle": "Học từ vựng qua gốc từ, từ nguyên & ngữ cảnh bằng prompt AI"
+    }
   },
   "hero": {
     "greeting": "Xin chào, tôi là",

@@ -12,7 +12,44 @@
     "notepad": "Notepad",
     "english": "English",
     "chess": "Play Chess",
-    "nasa": "NASA Space"
+    "nasa": "NASA Space",
+    "claude-artifacts": "Claude Artifacts"
+  },
+  "artifacts": {
+    "title": "Claude Artifacts",
+    "description": "Featured interactive AI prompts and applications developed by Chi Trung.",
+    "developer-portfolio": {
+      "title": "Developer Profile & CV",
+      "subtitle": "Interactive web/PDF portfolio showcasing experience and tech stack"
+    },
+    "vietnam-cv-optimizer": {
+      "title": "Vietnam CV Optimizer",
+      "subtitle": "AI-powered prompt library to fine-tune CVs for the VN tech market"
+    },
+    "it-market-insights": {
+      "title": "IT Market Insights 2026",
+      "subtitle": "18 AI prompts for salary, skills, and hiring trends in HCMC & Binh Duong"
+    },
+    "free-llm-ranker": {
+      "title": "Free LLM Strength Ranker",
+      "subtitle": "Strength evaluation of free LLMs available via OpenRouter"
+    },
+    "rsi-intelligence-hub": {
+      "title": "RSI Intelligence Hub",
+      "subtitle": "AI Recursive Self-Improvement and technological singularity tracker"
+    },
+    "vn-stock-prompts": {
+      "title": "VN Stock AI Prompts",
+      "subtitle": "Market research & stock analysis prompts in Vietnamese"
+    },
+    "shopee-spending": {
+      "title": "Shopee Spending Assistant",
+      "subtitle": "Budget control system and shopping spending guides"
+    },
+    "english-deep-learning": {
+      "title": "English Deep Learning Prompt",
+      "subtitle": "Learn vocabulary roots, etymology, and language context with AI"
+    }
   },
   "hero": {
     "greeting": "Hi, my name is",
