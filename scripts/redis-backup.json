@@ -1,0 +1,120 @@
+{
+  "portfolio:notepad_notes": [
+    {
+      "id": "note-1785741791237",
+      "content": "Đọc lỗi\nLỗi gì?\nXảy ra ở đâu?\nXác định đối tượng gây lỗi\nbiến?\nmodule?\nfile?\npackage?\nKiểm tra dependency\nimport chưa?\nbiến tồn tại chưa?\nobject đã được khởi tạo chưa?\nKiểm tra timing\nCó chạy trước khi dùng không?\nKiểm tra environment\nsys.path\nvirtualenv\nPython version\npackage đã cài chưa\nthư mục làm việc (cwd)\nXác minh bằng log hoặc debugger\nprint()\nbreakpoint()\npdb\nIDE debugger",
+      "originalContent": null,
+      "createdAt": "2026-08-03T07:23:11.237Z",
+      "images": {}
+    },
+    {
+      "id": "note-1785741695855",
+      "content": "• Giải thích trước khi chấp nhận: mỗi lần AI đưa ra code/kết quả, tự viết 1-2 câu giải thích nó làm gì và vì sao, bằng lời của bạn — không đọc lại comment AI sinh.\n • Dự đoán trước khi chạy: đoán output/hành vi trước, rồi so sánh với thực tế.\n • Viết test trước, xem đó là chuẩn mực chứ không phải bước tùy chọn.\n • Định kỳ tắt AI hẳn cho các block luyện nhỏ (Leetcode, side-project, đọc code người khác) — chậm hơn lúc học nhưng giữ lại lâu hơn.\n • Riêng AI Engineer: đầu tư hiểu sâu metric đánh giá, edge case, data distribution shift — vì lỗi ML thường “im lặng” (model vẫn chạy, số liệu vẫn ra, nhưng sai tinh vi).\n • Tìm nguồn hiệu chỉnh bên ngoài: code review từ senior, mock interview, đóng góp open-source. Bước này không tùy chọn — tự đánh giá một mình gần như không đủ để hiệu chỉnh nhận thức về đúng/sai của chính mình.",
+      "originalContent": null,
+      "createdAt": "2026-08-03T07:21:35.855Z",
+      "images": {}
+    },
+    {
+      "id": "note-1",
+      "content": "Interactive Notepad 📝\n\nWelcome to your new multi-card notepad dashboard! Write short thoughts, tasks, code snippets, or quotes. They appear instantly here as floating professional popup cards.",
+      "originalContent": null,
+      "createdAt": "2026-08-03T07:06:16.841Z"
+    },
+    {
+      "id": "note-2",
+      "content": "Pro Tips 💡\n\n- Click the Pencil icon on any popup card to edit its content.\n- Click the Trash icon to delete a card with smooth exit animations.\n- Use the '+' card to create a fresh new note.\n- Use the AI wand to enhance your writing!\n- Revert button restores the original text.",
+      "originalContent": null,
+      "createdAt": "2026-08-03T07:16:16.841Z"
+    }
+  ],
+  "portfolio:artifacts": [
+    {
+      "id": "custom-1785740826760",
+      "title": "Phòng Luyện Phản Xạ Tiếng Anh",
+      "url": "https://claude.ai/public/artifacts/8bbdf4a6-e697-484c-aa85-638a50908213",
+      "category": "Education",
+      "createdAt": "2026-08-03",
+      "description": "4 prompt mẫu và 20 tình huống luyện nói — ghép tình huống, trình độ, độ khó, phong cách, sao chép, rồi mở Voice lên nói."
+    },
+    {
+      "id": "custom-1785740542794",
+      "title": "Chunk Lab",
+      "url": "https://claude.ai/public/artifacts/25c9c286-7088-43cd-8bef-80a431267517",
+      "category": "AI Tool",
+      "createdAt": "2026-08-03",
+      "description": "Toàn bộ cụm từ và mẫu câu tự nhiên rút ra từ buổi luyện nói và bảng nhận xét lỗi của bạn. Nhấn nút nghe để luyện phát âm — nhấn Dịch khi nào cần xem nghĩa tiếng Việt."
+    },
+    {
+      "id": "developer-portfolio",
+      "title": "Developer Portfolio Prompt",
+      "url": "https://claude.ai/public/artifacts/91b72624-43a1-44b2-8351-96e345aac649",
+      "category": "AI Tool",
+      "createdAt": "2026-08-01",
+      "description": "Interactive portfolio layout generator prompt for Claude.",
+      "iconName": "user"
+    },
+    {
+      "id": "vietnam-cv-optimizer",
+      "title": "Vietnam CV Optimizer",
+      "url": "https://claude.ai/public/artifacts/c174a083-63d1-48f7-aaca-8c293e4a810e",
+      "category": "CV & Career",
+      "createdAt": "2026-08-01",
+      "description": "Tailored CV scanner and optimizer for Vietnamese tech roles.",
+      "iconName": "fileCheck"
+    },
+    {
+      "id": "it-market-insights",
+      "title": "IT Market Insights Dashboard",
+      "url": "https://claude.ai/public/artifacts/b6bc0fc2-110c-4a07-bd12-785ac058b0f3",
+      "category": "Analytics",
+      "createdAt": "2026-08-02",
+      "description": "Real-time trends and salary telemetry analyzer.",
+      "iconName": "trendingUp"
+    },
+    {
+      "id": "free-llm-ranker",
+      "title": "Free LLM Performance Ranker",
+      "url": "https://claude.ai/public/artifacts/2adc7758-6eea-44ee-b669-d9f167a99006",
+      "category": "AI Tool",
+      "createdAt": "2026-08-02",
+      "description": "Benchmark comparison tool for open-source and free LLM APIs.",
+      "iconName": "cpu"
+    },
+    {
+      "id": "rsi-intelligence-hub",
+      "title": "RSI Trading Intelligence Hub",
+      "url": "https://claude.ai/public/artifacts/29896560-2047-43ec-ab34-e8d3e86d6a7b",
+      "category": "Finance",
+      "createdAt": "2026-08-03",
+      "description": "Technical analysis and momentum indicator dashboard.",
+      "iconName": "zap"
+    },
+    {
+      "id": "vn-stock-prompts",
+      "title": "VN Stock Market Analyzer",
+      "url": "https://claude.ai/public/artifacts/7319a629-9844-4427-bf42-dab50f585de5?zarsrc=30&utm_source=zalo&utm_medium=zalo&utm_campaign=zalo",
+      "category": "Finance",
+      "createdAt": "2026-08-03",
+      "description": "Financial analysis & stock signal generator for Vietnam market.",
+      "iconName": "coins"
+    },
+    {
+      "id": "shopee-spending",
+      "title": "Shopee Spending Tracker",
+      "url": "https://claude.ai/public/artifacts/8b1c961d-5bb2-4f87-88a6-98de54667a47?zarsrc=30&utm_source=zalo&utm_medium=zalo&utm_campaign=zalo",
+      "category": "Utilities",
+      "createdAt": "2026-08-03",
+      "description": "Analyze e-commerce spending patterns and total expenses.",
+      "iconName": "shoppingBag"
+    },
+    {
+      "id": "english-deep-learning",
+      "title": "English Grammar Assistant",
+      "url": "https://claude.ai/public/artifacts/b7889082-bc1d-4a01-aa2d-db9920a294b5",
+      "category": "Education",
+      "createdAt": "2026-08-03",
+      "description": "Automated grammar breakdown and vocabulary extraction system.",
+      "iconName": "bookOpen"
+    }
+  ]
+}

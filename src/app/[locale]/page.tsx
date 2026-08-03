@@ -1,10 +1,4 @@
-import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Experience from "@/components/sections/Experience";
-import Projects from "@/components/sections/Projects";
-import Skills from "@/components/sections/Skills";
-import Education from "@/components/sections/Education";
-import Contact from "@/components/sections/Contact";
+import HomeScreen from "@/screens/home";
 import { setRequestLocale } from "next-intl/server";
 
 export default async function HomePage({
@@ -15,17 +9,6 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return (
-    <div className="flex flex-col">
-      <Hero />
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Education />
-      <Contact />
-      
-    </div>
-  );
+  return <HomeScreen />;
 }
 

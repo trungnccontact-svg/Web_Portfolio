@@ -4,7 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { Icons } from "@/components/common/icons";
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/mockdata/site";
 import { cn } from "@/lib/utils";
 
 type GitHubStarBadgeProps = {

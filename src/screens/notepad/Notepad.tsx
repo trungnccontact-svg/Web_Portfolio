@@ -21,7 +21,16 @@ import {
   Code,
   Image,
   HelpCircle,
-  Clipboard
+  Clipboard,
+  Menu,
+  Lock,
+  Link2,
+  Star,
+  MoreHorizontal,
+  Database,
+  FileText,
+  Layout,
+  ClipboardList
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
@@ -368,12 +377,26 @@ export function Notepad() {
   const [content, setContent] = React.useState("");
   
   const [isSaving, setIsSaving] = React.useState(false);
+  const [isNotesLoaded, setIsNotesLoaded] = React.useState(false);
   const [copiedNoteId, setCopiedNoteId] = React.useState<string | null>(null);
   const [aiLoadingNoteId, setAiLoadingNoteId] = React.useState<string | null>(null);
 
   const [editTab, setEditTab] = React.useState<"edit" | "preview">("edit");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [editorImages, setEditorImages] = React.useState<Record<string, string>>({});
+  const [editorTitle, setEditorTitle] = React.useState("");
+  const [editorBody, setEditorBody] = React.useState("");
+  const [isAiLoadingEditMode, setIsAiLoadingEditMode] = React.useState(false);
+
+  // Keep content in sync with title/body for preview tab or backend compatibility
+  React.useEffect(() => {
+    if (viewState === "edit") {
+      const fullContent = editorTitle.trim()
+        ? `# ${editorTitle.trim()}\n\n${editorBody}`
+        : editorBody;
+      setContent(fullContent);
+    }
+  }, [editorTitle, editorBody, viewState]);
 
   // RESILIENT TIDB STATES
   const [dbStatus, setDbStatus] = React.useState<"checking" | "connected" | "offline">("checking");
@@ -416,44 +439,55 @@ export function Notepad() {
     // 2. Ping DB connection
     checkDbConnection(savedUrl);
 
-    // 3. Load notes
-    const savedNotes = localStorage.getItem("portfolio_custom_notepad_notes_list");
-    setTimeout(() => {
-      if (savedNotes !== null) {
-        try {
-          setNotes(JSON.parse(savedNotes));
-        } catch (e) {
-          console.error("Failed to parse notes", e);
-        }
-      } else {
-        const defaultNotes: Note[] = [
-          {
-            id: "note-1",
-            content: "Interactive Notepad 📝\n\nWelcome to your new multi-card notepad dashboard! Write short thoughts, tasks, code snippets, or quotes. They appear instantly here as floating professional popup cards.",
-            originalContent: null,
-            createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString()
-          },
-          {
-            id: "note-2",
-            content: "Pro Tips 💡\n\n- Click the Pencil icon on any popup card to edit its content.\n- Click the Trash icon to delete a card with smooth exit animations.\n- Use the '+' card to create a fresh new note.\n- Use the AI wand to enhance your writing!\n- Revert button restores the original text.",
-            originalContent: null,
-            createdAt: new Date().toISOString()
-          }
-        ];
-        setNotes(defaultNotes);
-        localStorage.setItem("portfolio_custom_notepad_notes_list", JSON.stringify(defaultNotes));
-      }
-    }, 0);
+    // 3. Load notes from Redis Server
+    fetch("/api/notepad")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch notes");
+        return res.json();
+      })
+      .then((data) => {
+        setNotes(data);
+      })
+      .catch((e) => {
+        console.error("Failed to load notes from Redis", e);
+        toast({
+          title: "Lỗi kết nối",
+          description: "Không thể tải danh sách ghi chú từ server.",
+          variant: "destructive",
+        });
+      })
+      .finally(() => {
+        setIsNotesLoaded(true);
+      });
   }, []);
 
-  const saveNotesList = (updatedNotes: Note[]) => {
+  const saveNotesList = async (updatedNotes: Note[]) => {
     setNotes(updatedNotes);
-    localStorage.setItem("portfolio_custom_notepad_notes_list", JSON.stringify(updatedNotes));
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/notepad", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedNotes)
+      });
+      if (!res.ok) throw new Error("Failed to save");
+    } catch (e) {
+      console.error("Failed to save notes to Redis", e);
+      toast({
+        title: "Lỗi lưu dữ liệu",
+        description: "Không thể lưu ghi chú lên server. Vui lòng thử lại.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCreateNew = () => {
     setActiveNoteId(null);
     setContent("");
+    setEditorTitle("");
+    setEditorBody("");
     setEditTab("edit");
     setEditorImages({});
     setViewState("edit");
@@ -462,6 +496,16 @@ export function Notepad() {
   const handleEditNote = (note: Note) => {
     setActiveNoteId(note.id);
     setContent(note.content);
+    
+    // Split the content into title and body
+    const lines = note.content.split("\n");
+    const titleLine = lines[0] || "";
+    // If the first line is a markdown heading, strip it
+    const parsedTitle = titleLine.startsWith("# ") ? titleLine.replace(/^#\s+/, "") : titleLine;
+    const parsedBody = titleLine.startsWith("# ") ? lines.slice(1).join("\n").trim() : note.content;
+    
+    setEditorTitle(parsedTitle);
+    setEditorBody(parsedBody);
     setEditTab("edit");
     setEditorImages(note.images || {});
     setViewState("edit");
@@ -632,6 +676,28 @@ export function Notepad() {
     }
   };
 
+  // AI Enhance for Edit Mode (Notion "Ask AI" pill)
+  const handleAIEnhanceEditMode = async () => {
+    const textToEnhance = editorBody.trim() || editorTitle.trim();
+    if (!textToEnhance) return;
+
+    setIsAiLoadingEditMode(true);
+    try {
+      const enhanced = await callAIEnhance(textToEnhance);
+      setEditorBody(enhanced);
+      toast({ title: "✨ AI Enhanced", description: "Content improved by AI." });
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "AI Error",
+        description: err.message || "Failed to enhance with AI.",
+      });
+    } finally {
+      setIsAiLoadingEditMode(false);
+    }
+  };
+
   // Revert: restore the original content before AI modifications
   const handleRevertNote = (noteId: string) => {
     const note = notes.find((n) => n.id === noteId);
@@ -652,7 +718,7 @@ export function Notepad() {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
+    setEditorBody(e.target.value);
   };
 
   const handleImageInsertion = (base64: string, label = "Image") => {
@@ -667,14 +733,14 @@ export function Notepad() {
       const end = textarea.selectionEnd;
       const currentText = textarea.value;
       const newContent = currentText.substring(0, start) + imagePlaceholder + currentText.substring(end);
-      setContent(newContent);
+      setEditorBody(newContent);
 
       setTimeout(() => {
         textarea.focus();
         textarea.selectionStart = textarea.selectionEnd = start + imagePlaceholder.length;
       }, 0);
     } else {
-      setContent((prev) => prev + imagePlaceholder);
+      setEditorBody((prev) => prev + imagePlaceholder);
     }
   };
 
@@ -806,7 +872,7 @@ export function Notepad() {
   const insertMarkdown = (syntaxBefore: string, syntaxAfter = "") => {
     const textarea = document.getElementById("notepad-textarea") as HTMLTextAreaElement;
     if (!textarea) {
-      setContent((prev) => prev + syntaxBefore + syntaxAfter);
+      setEditorBody((prev) => prev + syntaxBefore + syntaxAfter);
       return;
     }
 
@@ -818,7 +884,7 @@ export function Notepad() {
     const inserted = syntaxBefore + selectedText + syntaxAfter;
     const newContent = currentText.substring(0, start) + inserted + currentText.substring(end);
 
-    setContent(newContent);
+    setEditorBody(newContent);
 
     setTimeout(() => {
       textarea.focus();
@@ -828,7 +894,11 @@ export function Notepad() {
   };
 
   const handleOk = () => {
-    if (content.trim() === "") {
+    const fullContent = editorTitle.trim() 
+      ? `# ${editorTitle.trim()}\n\n${editorBody.trim()}`
+      : editorBody.trim();
+
+    if (fullContent.trim() === "") {
       toast({
         variant: "destructive",
         title: "Cannot Save",
@@ -845,7 +915,7 @@ export function Notepad() {
         if (n.id === activeNoteId) {
           return { 
             ...n, 
-            content, 
+            content: fullContent, 
             images: editorImages, 
             createdAt: new Date().toISOString() 
           };
@@ -855,7 +925,7 @@ export function Notepad() {
     } else {
       const newNote: Note = {
         id: `note-${Date.now()}`,
-        content,
+        content: fullContent,
         originalContent: null,
         createdAt: new Date().toISOString(),
         images: editorImages,
@@ -921,7 +991,7 @@ export function Notepad() {
                 </span>
 
                 {/* DATABASE CONNECTION STATUS BADGE */}
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                   <button 
                     onClick={() => setIsSettingsOpen(true)}
                     className={cn(
@@ -944,15 +1014,21 @@ export function Notepad() {
                       {dbStatus === "offline" && "🟡 Local File Backup Active"}
                     </span>
                   </button>
-                </div>
+                </div> */}
               </div>
 
-              <motion.div 
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              >                
+              {!isNotesLoaded ? (
+                <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-muted-foreground">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                  <p className="text-sm">Đang tải ghi chú từ server...</p>
+                </div>
+              ) : (
+                <motion.div 
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="show"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                >                
                 {/* Add Note Trigger Card */}
                 <motion.div
                   variants={cardVariants}
@@ -1000,58 +1076,84 @@ export function Notepad() {
                   })}
                 </AnimatePresence>
               </motion.div>
+              )}
             </motion.div>
           ) : (
             
-            /* STATE B: MINIMALIST INPUT CARD (EDIT MODE) */
+            /* STATE B: MINIMALIST INPUT CARD (EDIT MODE) - NOTION STYLE */
             <motion.div
               key="edit-view"
               initial={{ opacity: 0, y: 15, scale: 0.99 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -15, scale: 0.99 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-2xl mx-auto rounded-3xl border border-border/40 bg-background/40 backdrop-blur-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 focus-within:border-primary/40 focus-within:shadow-[0_0_30px_rgba(var(--primary),0.05)] border-t-primary/20"
+              className="w-full max-w-3xl mx-auto rounded-3xl border border-border/40 bg-[#191919]/90 backdrop-blur-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 focus-within:border-primary/20 focus-within:shadow-[0_0_40px_rgba(var(--primary),0.03)]"
+              style={{ minHeight: "70vh" }}
             >
-              {/* Breadcrumb back to dashboard & Tabs */}
-              <div className="px-6 py-3 border-b border-border/10 bg-background/15 flex items-center justify-between flex-wrap gap-2">
-                <button
-                  onClick={() => setViewState("dashboard")}
-                  className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground hover:text-foreground flex items-center gap-1 select-none transition-colors cursor-pointer"
-                >
-                  Dashboard
-                  <ChevronRight className="w-3.5 h-3.5" />
-                  {activeNoteId ? "Edit Note" : "New Note"}
-                </button>
-
-                {/* Edit / Preview Tabs */}
-                <div className="flex bg-background/50 border border-white/5 rounded-xl p-0.5 select-none text-[11px] font-bold">
+              {/* Notion Style Header Bar */}
+              <div className="px-4 py-2 border-b border-border/10 bg-background/25 flex items-center justify-between select-none text-[13px] text-muted-foreground select-none flex-wrap gap-2">
+                {/* Left Side */}
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setEditTab("edit")}
-                    className={cn(
-                      "px-3.5 py-1.5 rounded-lg cursor-pointer transition-all",
-                      editTab === "edit" 
-                        ? "bg-primary text-primary-foreground shadow" 
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
+                    onClick={() => setViewState("dashboard")}
+                    className="p-1 rounded hover:bg-white/5 transition-colors cursor-pointer text-foreground/80 hover:text-foreground flex items-center justify-center"
+                    title="Back to dashboard"
                   >
-                    Edit
+                    <Menu className="w-4 h-4" />
                   </button>
-                  <button
-                    onClick={() => setEditTab("preview")}
-                    className={cn(
-                      "px-3.5 py-1.5 rounded-lg cursor-pointer transition-all",
-                      editTab === "preview" 
-                        ? "bg-primary text-primary-foreground shadow" 
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
+                  <span className="font-medium text-foreground/90 max-w-[120px] md:max-w-[200px] truncate">
+                    {editorTitle.trim() || "New page"}
+                  </span>
+                  <span className="text-muted-foreground/30">/</span>
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-white/5 cursor-pointer text-muted-foreground/80 hover:text-foreground transition-colors">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span className="text-xs">Private</span>
+                    <span className="text-[9px]">▼</span>
+                  </div>
+                </div>
+
+                {/* Right Side */}
+                <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+                  <span className="text-xs text-muted-foreground/60 hidden sm:inline">Edited just now</span>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-foreground font-semibold text-xs cursor-pointer border border-white/5 transition-colors active:scale-95">
+                    <Lock className="w-3 h-3" />
+                    <span>Share</span>
+                    <span className="text-[8px]">▼</span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast({ title: "Link Copied!", description: "Copied page URL to clipboard." });
+                    }}
+                    className="p-1.5 rounded hover:bg-white/5 hover:text-foreground transition-colors cursor-pointer"
+                    title="Copy link"
                   >
-                    Preview
+                    <Link2 className="w-4 h-4" />
+                  </button>
+                  <button 
+                    className="p-1.5 rounded hover:bg-white/5 hover:text-foreground transition-colors cursor-pointer"
+                    title="Favorite"
+                  >
+                    <Star className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => setEditTab(editTab === "edit" ? "preview" : "edit")}
+                    className="px-2.5 py-1 rounded hover:bg-white/5 text-xs font-semibold hover:text-foreground transition-colors cursor-pointer border border-white/5"
+                    title="Toggle Edit/Preview"
+                  >
+                    {editTab === "edit" ? "Preview" : "Edit"}
+                  </button>
+                  <button 
+                    className="p-1.5 rounded hover:bg-white/5 hover:text-foreground transition-colors cursor-pointer"
+                    title="More options"
+                  >
+                    <MoreHorizontal className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
               {/* Textarea or Preview */}
-              <div className="p-6 md:p-8 min-h-[250px] md:min-h-[300px] flex flex-col flex-1 relative">
+              <div className="p-6 md:p-8 flex flex-col flex-1 relative">
                 <input 
                   type="file" 
                   ref={fileInputRef} 
@@ -1063,7 +1165,7 @@ export function Notepad() {
                 {editTab === "edit" ? (
                   <>
                     {/* Markdown Formatting Toolbar */}
-                    <div className="flex items-center gap-1 pb-3 mb-3 border-b border-border/10 select-none">
+                    <div className="flex items-center gap-1 pb-3 mb-5 border-b border-border/10 select-none">
                       <button
                         type="button"
                         onClick={() => insertMarkdown("**", "**")}
@@ -1133,7 +1235,7 @@ export function Notepad() {
                                 const updated = { ...editorImages };
                                 delete updated[key];
                                 setEditorImages(updated);
-                                setContent(prev => prev.replace(`![${key}]`, ""));
+                                setEditorBody(prev => prev.replace(`![${key}]`, ""));
                               }}
                               className="absolute inset-0 bg-black/60 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity cursor-pointer font-bold text-xs"
                               title="Remove image"
@@ -1145,18 +1247,114 @@ export function Notepad() {
                       </div>
                     )}
 
+                    {/* Notion-style Title Input */}
+                    <input
+                      type="text"
+                      value={editorTitle}
+                      onChange={(e) => setEditorTitle(e.target.value)}
+                      placeholder="New page"
+                      className="w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-3xl md:text-4xl font-extrabold text-foreground placeholder-foreground/20 font-sans tracking-tight mb-5 p-0 select-text"
+                      spellCheck={false}
+                    />
+
+                    {/* Notion-style Body Textarea */}
                     <textarea
                       id="notepad-textarea"
-                      value={content}
+                      value={editorBody}
                       onChange={handleInputChange}
                       onPaste={handlePaste}
                       onDragOver={handleDragOver}
                       onDrop={handleDrop}
-                      placeholder={t("emptyState") || "Type your note here..."}
+                      placeholder='Press "Enter" to write, or select an AI template below...'
                       className="w-full flex-1 bg-transparent border-none focus:outline-none resize-none p-0 text-foreground placeholder-foreground/30 font-sans text-base md:text-lg leading-relaxed focus-visible:outline-none focus-visible:ring-0 select-text"
+                      style={{ minHeight: "380px" }}
                       spellCheck={false}
                       autoFocus
                     />
+
+                    {/* Notion Action Pills ("Get started with") */}
+                    <div className="mt-8 border-t border-border/15 pt-5 select-none">
+                      <p className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider mb-3">
+                        Get started with
+                      </p>
+                      <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                        {/* Ask AI Pill */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!editorBody.trim()) {
+                              setEditorBody("Drafting a new project idea with AI...");
+                            }
+                            handleAIEnhanceEditMode();
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer duration-200 active:scale-95"
+                          disabled={isAiLoadingEditMode}
+                        >
+                          {isAiLoadingEditMode ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Sparkles className="w-3.5 h-3.5" />
+                          )}
+                          <span>Ask AI</span>
+                        </button>
+
+                        {/* AI Meeting Notes Pill */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const meetingNotesTemplate = `### 📅 Meeting Notes: Project Sync\n\n**Participants:** @Trung, @Team\n**Date:** ${new Date().toLocaleDateString()}\n\n#### 🎯 Objectives\n- [ ] Align on Q3 deliverables\n- [ ] Database migration review\n\n#### 📝 Discussion\n- Discussed switching to TiDB serverless.\n- Code is fully compatible.\n\n#### 🚀 Action Items\n- [ ] Deploy new build to production`;
+                            setEditorBody(meetingNotesTemplate);
+                            toast({ title: "Template Applied", description: "Meeting Notes template loaded." });
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-foreground/80 hover:bg-white/10 hover:text-foreground transition-all cursor-pointer duration-200 active:scale-95"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>AI Meeting Notes</span>
+                        </button>
+
+                        {/* Database Pill */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const tableTemplate = `### 📊 Project Roadmap Database\n\n| Task ID | Description | Status | Assignee |\n| :--- | :--- | :--- | :--- |\n| TASK-1 | TiDB database migration | Done | @Trung |\n| TASK-2 | Notion UI redesign | In Progress | @Trung |\n| TASK-3 | Go backend integration | Planning | @Trung |`;
+                            setEditorBody(tableTemplate);
+                            toast({ title: "Template Applied", description: "Database table template loaded." });
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-foreground/80 hover:bg-white/10 hover:text-foreground transition-all cursor-pointer duration-200 active:scale-95"
+                        >
+                          <Database className="w-3.5 h-3.5 animate-pulse" />
+                          <span>Database</span>
+                        </button>
+
+                        {/* Form Pill */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const formTemplate = `### 📝 Feedback Survey Form\n\n**1. Overall Satisfaction:**\n- [ ] Very Satisfied\n- [ ] Satisfied\n- [ ] Neutral\n- [ ] Dissatisfied\n\n**2. Key comments & suggestions:**\n\n\n*Thank you for your valuable feedback!*`;
+                            setEditorBody(formTemplate);
+                            toast({ title: "Template Applied", description: "Form template loaded." });
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-foreground/80 hover:bg-white/10 hover:text-foreground transition-all cursor-pointer duration-200 active:scale-95"
+                        >
+                          <ClipboardList className="w-3.5 h-3.5" />
+                          <span>Form</span>
+                        </button>
+
+                        {/* Templates Pill */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const todoTemplate = `### 🎯 Personal Task List\n\n- [ ] 🏃‍♂️ Morning workout\n- [ ] 📧 Check email replies\n- [ ] 💻 Complete portfolio section\n- [ ] 📚 Read 10 pages of book`;
+                            setEditorBody(todoTemplate);
+                            toast({ title: "Template Applied", description: "Todo checklist template loaded." });
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-foreground/80 hover:bg-white/10 hover:text-foreground transition-all cursor-pointer duration-200 active:scale-95"
+                        >
+                          <Layout className="w-3.5 h-3.5" />
+                          <span>Templates</span>
+                        </button>
+                      </div>
+                    </div>
                   </>
                 ) : (
                   <div className="w-full flex-1 overflow-y-auto select-text max-h-[400px] pb-4">

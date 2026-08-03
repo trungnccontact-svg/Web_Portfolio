@@ -3,7 +3,7 @@ import * as React from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import CustomTooltip from "@/components/ui/custom-tooltip";
-import { SocialLinks } from "@/config/socials";
+import { SocialLinks } from "@/mockdata/socials";
 import { cn } from "@/lib/utils";
 
 export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {

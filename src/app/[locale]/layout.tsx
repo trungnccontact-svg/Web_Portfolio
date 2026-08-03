@@ -13,6 +13,9 @@ import { LocaleToggle } from "@/components/common/locale-toggle";
 import { SiteFooter } from "@/components/common/site-footer";
 import ChatBox from "@/components/chat/ChatBox";
 import { cn } from "@/lib/utils";
+import { SessionProvider } from "next-auth/react";
+import { UserAuthButton } from "@/components/common/UserAuthButton";
+import { CursorGlow } from "@/components/common/CursorGlow";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -53,34 +56,38 @@ export default async function LocaleLayout({
           fontHeading.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange={false}
-          themes={["light", "dark", "retro", "cyberpunk", "paper", "aurora", "synthwave"]}
-        >
-          <NextIntlClientProvider messages={messages}>
-            <div className="relative flex min-h-screen flex-col">
-              <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-20 items-center justify-between py-6">
-                  <MainNav />
-                  <div className="flex flex-1 items-center justify-end space-x-2">
-                    <nav className="flex items-center space-x-1">
-                      <LocaleToggle />
-                      <ModeToggle />
-                    </nav>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange={false}
+            themes={["light", "dark", "retro", "cyberpunk", "paper", "aurora", "synthwave"]}
+          >
+            <NextIntlClientProvider messages={messages}>
+              <div className="relative flex min-h-screen flex-col">
+                <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <div className="container flex h-20 items-center justify-between py-6">
+                    <MainNav />
+                    <div className="flex flex-1 items-center justify-end space-x-2">
+                      <nav className="flex items-center space-x-1">
+                        <LocaleToggle />
+                        <ModeToggle />
+                        <UserAuthButton />
+                      </nav>
+                    </div>
                   </div>
-                </div>
-              </header>
-              <main className="flex-1">{children}</main>
-              <SiteFooter />
-            </div>
-            <ModalProvider />
-            <ChatBox />
-            <Toaster />
-          </NextIntlClientProvider>
-        </ThemeProvider>
+                </header>
+                <main className="flex-1">{children}</main>
+                <SiteFooter />
+              </div>
+              <ModalProvider />
+              <ChatBox />
+              <Toaster />
+              <CursorGlow />
+            </NextIntlClientProvider>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
