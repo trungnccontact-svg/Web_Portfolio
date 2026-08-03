@@ -84,7 +84,7 @@ export default async function LocaleLayout({
               <ModalProvider />
               <ChatBox />
               <Toaster />
-              <CursorGlow />
+              {/* <CursorGlow /> */}
             </NextIntlClientProvider>
           </ThemeProvider>
         </SessionProvider>

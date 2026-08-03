@@ -64,7 +64,7 @@ export default function Hero() {
       className="relative min-h-[100svh] flex items-center justify-center overflow-hidden"
     >
       {/* ── MASONRY BACKGROUND ─────────────────────────── */}
-      <MasonryScrollGrid />
+      {/* <MasonryScrollGrid /> */}
 
       {/* ── DARK VIGNETTE OVERLAYS ─────────────────────── */}
       {/* Left & right gradient fades */}
