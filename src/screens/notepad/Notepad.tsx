@@ -188,56 +188,6 @@ function GameNoteCard({
   formatDate,
 }: GameNoteCardProps) {
   const cardRef = React.useRef<HTMLDivElement>(null);
-  const [tiltStyle, setTiltStyle] = React.useState<React.CSSProperties>({
-    transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
-    transition: "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
-  });
-  const [shineStyle, setShineStyle] = React.useState<React.CSSProperties>({
-    opacity: 0,
-    background: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%)",
-  });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    const rect = card.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    
-    const xPct = (mouseX / width) - 0.5;
-    const yPct = (mouseY / height) - 0.5;
-    
-    const rotateX = -yPct * 12; // Cap vertical tilt
-    const rotateY = xPct * 12;  // Cap horizontal tilt
-    
-    setTiltStyle({
-      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
-      transition: "transform 0.1s ease-out",
-    });
-
-    setShineStyle({
-      opacity: 1,
-      background: `radial-gradient(circle at ${mouseX}px ${mouseY}px, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 55%)`,
-      transition: "opacity 0.1s ease-out",
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setTiltStyle({
-      transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
-      transition: "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
-    });
-    setShineStyle({
-      opacity: 0,
-      background: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 50%)",
-      transition: "all 0.5s ease-out",
-    });
-  };
-
   const cardNoStr = `NO. ${String(index + 1).padStart(3, "0")}`;
 
   return (
@@ -245,34 +195,17 @@ function GameNoteCard({
       variants={cardVariants}
       layout
       className={cn(
-        "rounded-2xl flex flex-col justify-between min-h-[250px] transition-all duration-300 group overflow-hidden relative select-none",
+        "rounded-2xl flex flex-col justify-between min-h-[250px] transition-all duration-200 overflow-hidden relative select-text touch-auto",
         hasOriginal 
-          ? "p-[1.5px] bg-gradient-to-br from-violet-500 via-fuchsia-500 to-cyan-500 shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]" 
-          : "p-[1px] bg-gradient-to-br from-border/60 via-border/20 to-border/40 hover:from-primary/30 hover:to-primary/10 shadow-lg hover:shadow-xl"
+          ? "p-[1.5px] bg-gradient-to-br from-violet-500/50 via-fuchsia-500/30 to-cyan-500/50 shadow-md" 
+          : "p-[1px] bg-border/40 hover:bg-border/60 shadow-md"
       )}
     >
-      {/* 3D Glass shine reflection overlay */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-300" 
-        style={shineStyle} 
-      />
-
-      {/* Holographic sweep light glint on hover */}
-      <div className="absolute inset-0 w-[200%] h-[200%] bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000 cubic-bezier(0.3, 1, 0.2, 1) pointer-events-none z-10" />
-
       {/* Inner card container */}
       <div 
         ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={tiltStyle}
-        className="w-full h-full flex-1 flex flex-col justify-between rounded-[15px] bg-[#090b11]/95 backdrop-blur-3xl overflow-hidden relative z-0"
+        className="w-full h-full flex-1 flex flex-col justify-between rounded-[15px] bg-[#090b11] overflow-hidden relative z-0 select-text touch-auto"
       >
-        {/* Holographic background overlay for enhanced rare cards */}
-        {hasOriginal && (
-          <div className="absolute inset-0 bg-gradient-to-tr from-violet-500/10 via-fuchsia-500/5 to-cyan-500/10 opacity-60 pointer-events-none z-0 animate-pulse" />
-        )}
-
         {/* AI loading overlay */}
         {isAILoading && (
           <div className="absolute inset-0 bg-background/60 backdrop-blur-sm z-20 rounded-[15px] flex flex-col items-center justify-center gap-3">
@@ -289,19 +222,19 @@ function GameNoteCard({
           </span>
           {hasOriginal ? (
             <span className="text-[9px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 flex items-center gap-1 uppercase tracking-widest select-none bg-primary/10 px-2 py-0.5 rounded-full border border-violet-500/20">
-              <Sparkles className="w-3 h-3 text-violet-400 animate-pulse" />
+              <Sparkles className="w-3 h-3 text-violet-400" />
               Holo Rare AI
             </span>
           ) : (
-            <span className="text-[9px] font-mono font-bold tracking-widest text-muted-foreground/50 group-hover:text-primary/70 transition-colors uppercase">
+            <span className="text-[9px] font-mono font-bold tracking-widest text-muted-foreground/50 uppercase">
               {cardNoStr}
             </span>
           )}
         </div>
 
         {/* Note content */}
-        <div className="p-5 flex-1 select-text z-10 overflow-hidden">
-          <div className="text-foreground/85 font-sans text-sm leading-relaxed whitespace-pre-wrap text-left line-clamp-6 select-text selection:bg-primary/20">
+        <div className="p-5 flex-1 z-10 overflow-hidden select-text touch-auto">
+          <div className="text-foreground/90 font-sans text-sm leading-relaxed whitespace-pre-wrap text-left select-text touch-auto selection:bg-primary/30 selection:text-foreground">
             {parseContentWithImages(note.content, note.images || {}, false)}
           </div>
         </div>
@@ -953,7 +886,7 @@ export function Notepad() {
   };
 
   return (
-    <div className="container min-h-[calc(100vh-6rem)] max-w-6xl flex flex-col items-center justify-start p-4 md:p-8 select-none z-10 relative">
+    <div className="container min-h-[calc(100vh-6rem)] max-w-6xl flex flex-col items-center justify-start p-4 md:p-8 select-text touch-auto z-10 relative">
       
       {/* Background radial glowing gradient */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] md:w-[800px] h-[400px] rounded-full blur-[100px] md:blur-[140px] bg-primary/10 opacity-30 -z-10 animate-pulse" />
