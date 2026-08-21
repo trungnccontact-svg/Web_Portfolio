@@ -14,7 +14,7 @@ import {
   RotateCcw,
   Sparkles,
   CloudLightning,
-  CloudCheck,
+  Cloud,
   History,
   Edit2,
   Check
@@ -244,7 +244,7 @@ export default function PersonalRulesScreen() {
             {session ? (
               dbSynced ? (
                 <>
-                  <CloudCheck className="h-4 w-4 text-emerald-500" />
+                  <Cloud className="h-4 w-4 text-emerald-500" />
                   Đã đồng bộ đám mây ({session.user?.email})
                 </>
               ) : (
