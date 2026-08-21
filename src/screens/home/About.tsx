@@ -88,7 +88,7 @@ export default function About() {
                   </div>
                   <div className="p-4 text-center">
                     <p className="font-heading font-bold text-base">Nguyen Chi Trung</p>
-                    <p className="text-xs text-primary mt-0.5">Full-Stack Developer</p>
+                    <p className="text-xs text-primary mt-0.5">Junior Business Analyst | Technical Background</p>
                   </div>
                 </div>
               </div>
@@ -141,9 +141,9 @@ export default function About() {
             viewport={{ once: true }}
             className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full"
           >
-            <StatCard icon={Code2} value="3+" label="Years Coding" />
-            <StatCard icon={Briefcase} value="10+" label="Projects Built" />
-            <StatCard icon={GraduationCap} value="B.Eng" label="Computer Sci." />
+            <StatCard icon={Code2} value="1+" label="Years Software Delivery" />
+            <StatCard icon={Briefcase} value="6+" label="Workflows & Projects" />
+            <StatCard icon={GraduationCap} value="B.Eng" label="Information Tech" />
           </motion.div>
         </AnimatedSection>
       </div>

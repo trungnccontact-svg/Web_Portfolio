@@ -13,7 +13,8 @@
     "english": "Học tiếng Anh",
     "chess": "Chơi Cờ vua",
     "nasa": "Vũ Trụ NASA",
-    "claude-artifacts": "Sản phẩm Claude"
+    "claude-artifacts": "Sản phẩm Claude",
+    "personal-rules": "Quản lý Quy tắc"
   },
   "artifacts": {
     "title": "Sản phẩm Claude",
@@ -54,18 +55,18 @@
   "hero": {
     "greeting": "Xin chào, tôi là",
     "name": "Nguyễn Chí Trung",
-    "roles": ["Lập trình viên Full-stack", "React Developer", "NestJS Developer", "Mobile Developer"],
-    "description": "Tôi xây dựng các ứng dụng web & mobile hoàn hảo về pixel, dễ tiếp cận và hiệu suất cao.",
+    "roles": ["Junior Business Analyst", "Technical Business Analyst", "Kỹ sư phần mềm / BA", "Lập trình viên Full-stack"],
+    "description": "Chuyên viên Junior Business Analyst với nền tảng kỹ thuật vững chắc và hơn 1 năm kinh nghiệm thực tế triển khai phần mềm, kết nối yêu cầu nghiệp vụ với triển khai kỹ thuật.",
     "downloadCV": "Tải CV",
     "contactMe": "Liên hệ"
   },
   "about": {
     "title": "Giới thiệu",
-    "description": "Lập trình viên Full-stack với hơn 1 năm kinh nghiệm xây dựng ứng dụng web và mobile cho môi trường production sử dụng React, React Native và NestJS. Có kinh nghiệm trong quy trình phát triển có hỗ trợ AI để tăng tốc độ triển khai các tính năng phức tạp — từ xây dựng UI đến tích hợp API. Hiện đang dẫn dắt dự án CONUT — nền tảng mua chung xã hội xây dựng trên Next.js, NestJS và TiDB, áp dụng tư duy hệ thống để kiến trúc các giải pháp end-to-end có khả năng mở rộng.",
+    "description": "Chuyên viên có nền tảng kỹ thuật vững chắc với hơn 1 năm kinh nghiệm thực tế trong triển khai phần mềm (tự động hóa công nghiệp & sản phẩm B2C), kết hợp với sự tham gia trực tiếp vào mô hình kinh doanh, chiến lược marketing và vận hành cho nền tảng thương mại điện tử mua chung. Thành thạo việc kết nối yêu cầu kinh doanh và triển khai kỹ thuật — có kiến thức làm việc với SQL, tài liệu hóa quy trình (Visio/lưu đồ), và làm rõ yêu cầu trong các đội ngũ đa chức năng.",
     "info": {
       "phone": "0832942345",
       "email": "trungnc.contact@gmail.com",
-      "address": "Số 524C, khu phố Nguyễn Trãi, phường Lái Thiêu, TP. Hồ Chí Minh"
+      "address": "TP. Hồ Chí Minh"
     }
   },
   "experience": {
@@ -74,13 +75,12 @@
       {
         "company": "Thuan Nhat – IAS",
         "fullName": "Giải pháp Tự động hóa Công nghiệp",
-        "role": "Lập trình viên",
-        "period": "Tháng 1/2026 – Hiện tại",
+        "role": "Kỹ sư phần mềm",
+        "period": "Tháng 1/2026 – Tháng 7/2026",
         "bullets": [
-          "Sử dụng Microsoft Project Professional để tạo và duy trì kế hoạch thực hiện dự án cho các triển khai tự động hóa nhà máy tại nhiều tỉnh (Đồng Nai, Vĩnh Long).",
-          "Xây dựng lưu đồ hệ thống và tài liệu quy trình sử dụng Microsoft Visio, hỗ trợ bàn giao kỹ thuật và làm rõ yêu cầu cho các dự án nhà máy.",
-          "Thực hành viết truy vấn SQL Server cơ bản và hiểu cấu trúc schema thông qua tự học.",
-          "Đóng góp vào các tác vụ bảo trì và tính năng trong cơ sở mã VB.NET / .NET Framework legacy."
+          "Sử dụng Microsoft Project Professional để tạo và duy trì kế hoạch thực hiện dự án cho các triển khai tự động hóa nhà máy tại nhiều tỉnh (Đồng Nai, Vĩnh Long), theo dõi phân công nhiệm vụ và tiến độ giữa các thành viên.",
+          "Tạo lưu đồ quy trình và tài liệu hóa 3+ quy trình PCS (bao gồm Lập kế hoạch ép viên, Quy trình phối trộn Dosing) và sơ đồ Swimlane cho dự án thức ăn thủy sản DHVL4 bằng Microsoft Visio, hỗ trợ bàn giao kỹ thuật và làm rõ yêu cầu cho các dự án cấp nhà máy.",
+          "Áp dụng kiến thức làm việc thực tế về SQL Server và các hệ thống doanh nghiệp VB.NET/.NET thông qua công tác bảo trì trực tiếp các ứng dụng vận hành nhà máy."
         ]
       },
       {
@@ -89,11 +89,7 @@
         "role": "Lập trình viên Full-stack",
         "period": "Tháng 3/2025 – Tháng 11/2025",
         "bullets": [
-          "Tham gia vào toàn bộ vòng đời phát triển của 5 ứng dụng web và mobile production trong lĩnh vực bất động sản, thương mại điện tử và đặt lịch dịch vụ.",
-          "Phát triển độc lập các màn hình UI pixel-perfect sử dụng React và Tailwind CSS, chuyển đổi thiết kế Figma thành giao diện responsive đa thiết bị.",
-          "Phát triển các module API backend (NestJS, MongoDB) cho phân tích, đặt lịch hẹn và quản lý sản phẩm.",
-          "Tích hợp các dịch vụ bên thứ ba bao gồm Google Maps API, i18n cho hỗ trợ đa ngôn ngữ và Redux Toolkit / Zustand cho quản lý state toàn cục.",
-          "Tham gia daily stand-ups và code reviews dưới sự hướng dẫn của Tech Lead, áp dụng phản hồi để cải thiện chất lượng code."
+          "Triển khai các tính năng end-to-end cho các ứng dụng web production (backend NestJS/MongoDB, frontend React/Tailwind) trong quy trình Agile hàng ngày — sprint planning, stand-up và code review."
         ]
       }
     ]
@@ -104,16 +100,15 @@
       {
         "name": "CONUT",
         "subtitle": "Nền tảng thương mại điện tử mua chung xã hội",
-        "role": "Trưởng nhóm Full-stack Developer",
-        "period": "Tháng 10/2025 – Hiện tại",
+        "role": "Đóng góp Kỹ thuật & Kinh doanh",
+        "period": "Tháng 8/2025 – Tháng 3/2026",
         "teamSize": "3",
-        "stack": ["React Native", "Expo", "NestJS", "MongoDB", "TypeScript"],
+        "stack": ["React Native", "Expo", "NestJS", "MongoDB", "TypeScript", "MS Visio"],
         "liveUrl": "https://conut.vn",
         "image": "/images/projects/conut.png",
         "bullets": [
-          "Thiết kế kiến trúc hệ thống tổng thể và schema database để hỗ trợ logic mua chung, định giá động và luồng kho hàng đa người dùng.",
-          "Xây dựng Group Buying Engine cốt lõi cho phép người dùng tạo nhóm mua hàng động để có giá ưu đãi.",
-          "Dẫn dắt phát triển end-to-end trên mobile (React Native/Expo) và backend (NestJS)."
+          "Tham gia các cuộc thảo luận của đội ngũ nòng cốt về thiết kế mô hình kinh doanh, chiến lược marketing và vận hành hàng ngày cho nền tảng thương mại điện tử mua chung xã hội tập trung vào phân phối nông sản.",
+          "Phân tích và vẽ sơ đồ 3 quy trình kinh doanh cốt lõi (hành trình mua chung của người mua, quản lý sản phẩm/đơn hàng của người bán, quy trình phê duyệt của admin) và rà soát yêu cầu kỹ thuật của nền tảng so với thực tế triển khai để xác định khoảng cách phạm vi (scope gaps) giữa các tính năng lên kế hoạch và thực tế xây dựng — hỗ trợ cả việc triển khai kỹ thuật và ra quyết định kinh doanh trong đội ngũ sáng lập 3 người."
         ]
       },
       {
@@ -190,39 +185,58 @@
     ]
   },
   "skills": {
-    "title": "Kỹ năng",
+    "title": "Kỹ năng & Năng lực",
     "categories": {
-      "frontend": {
-        "label": "Frontend",
-        "items": ["ReactJS", "React Native (Expo)", "Tailwind CSS", "NativeWind", "Redux Toolkit", "Zustand"]
+      "ba_process": {
+        "label": "Phân tích Nghiệp vụ & Quy trình",
+        "items": [
+          "Thu thập & Làm rõ Yêu cầu",
+          "Vẽ Sơ đồ Quy trình (Visio)",
+          "Phân tích Data & Logic Quy trình",
+          "Lập & Theo dõi Kế hoạch Dự án (MS Project)",
+          "Nghiên cứu & Thử nghiệm Nhanh với AI",
+          "Giao tiếp Đa chức năng"
+        ]
       },
-      "backend": {
-        "label": "Backend",
-        "items": ["NestJS", "Node.js"]
-      },
-      "database": {
-        "label": "Cơ sở dữ liệu",
-        "items": ["MongoDB", "SQL Server"]
-      },
-      "languages": {
-        "label": "Ngôn ngữ lập trình",
-        "items": ["JavaScript", "TypeScript"]
+      "technical": {
+        "label": "Nền tảng Kỹ thuật",
+        "items": [
+          "SQL Server & Truy vấn SQL",
+          "MongoDB",
+          "ReactJS & Next.js",
+          "React Native (Expo)",
+          "NestJS & Node.js",
+          "Hệ thống VB.NET / .NET",
+          "Tailwind CSS"
+        ]
       },
       "tools": {
-        "label": "Công cụ",
-        "items": ["Git/GitHub", "Postman", "Figma", "Docker", "MS Project Professional", "MS Visio"]
+        "label": "Công cụ & Phần mềm",
+        "items": [
+          "Microsoft Visio",
+          "MS Project Professional",
+          "Git / GitHub",
+          "Postman",
+          "Figma",
+          "Docker"
+        ]
       },
       "practices": {
-        "label": "Phương pháp",
-        "items": ["RESTful API Development", "Agile/Scrum", "AI-Assisted Development"]
+        "label": "Phương pháp & Triển khai",
+        "items": [
+          "Agile / Scrum",
+          "Sprint Planning & Stand-ups",
+          "Phân tích Khoảng cách Phạm vi (Scope Gap)",
+          "Rà soát Đặc tả Kỹ thuật"
+        ]
       }
     }
   },
   "education": {
     "title": "Học vấn",
     "school": "Đại học Thủ Dầu Một",
-    "degree": "Cử nhân Kỹ thuật — Công nghệ Thông tin",
-    "period": "2020 – 2025"
+    "degree": "Công nghệ Thông tin",
+    "period": "Tháng 8/2020 – Tháng 3/2025"
   },
   "certifications": {
     "title": "Chứng chỉ & Hoạt động",
@@ -237,7 +251,7 @@
       {
         "name": "Cuộc thi Khởi nghiệp Đại học Thủ Dầu Một 2024",
         "role": "Thí sinh",
-        "detail": "Phát triển CONUT.VN – Website dịch vụ giao hàng tạp hóa."
+        "detail": "Phát triển CONUT.VN – Nền tảng thương mại điện tử mua chung xã hội."
       },
       {
         "name": "Danh hiệu \"Sinh viên 5 tốt\"",

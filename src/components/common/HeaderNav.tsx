@@ -9,7 +9,7 @@ import { Norican } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/mockdata/site";
 import { Icons } from "@/components/common/icons";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Sliders } from "lucide-react";
 
 const norican = Norican({
   weight: ["400"],
@@ -202,6 +202,14 @@ export function HeaderNav({ activeSection: externalActiveSection }: HeaderNavPro
       13
     );
 
+  const PagePersonalRules = () =>
+    renderRouteItem(
+      "/personal-rules",
+      t("personal-rules"),
+      <Sliders className="h-4 w-4 text-emerald-500 animate-pulse shrink-0" />,
+      14
+    );
+
   /*
    * =========================================================================================
    * MASTER UNIFIED NAVIGATION LIST (DESKTOP + MOBILE)
@@ -224,6 +232,7 @@ export function HeaderNav({ activeSection: externalActiveSection }: HeaderNavPro
       <PageChess />
       <PageNasa /> */}
       <PageClaudeArtifacts />
+      <PagePersonalRules />
     </>
   );
 

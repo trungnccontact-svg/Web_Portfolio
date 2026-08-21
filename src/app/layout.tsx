@@ -2,23 +2,23 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nguyen Chi Trung | Full-stack Developer",
+  title: "Nguyen Chi Trung | Junior Business Analyst",
   description:
-    "Full-stack Developer with 1+ year of experience building production web and mobile applications using React, React Native, and NestJS.",
+    "A technically-grounded Junior Business Analyst with 1+ year of hands-on software delivery experience, comfortable bridging business requirements and technical implementation.",
   keywords: [
-    "Full-stack Developer",
-    "React",
-    "React Native",
-    "NestJS",
-    "TypeScript",
-    "Portfolio",
+    "Junior Business Analyst",
+    "Business Analyst",
+    "Technical BA",
+    "Software Engineer",
+    "Requirement Clarification",
+    "Process Mapping",
     "Nguyen Chi Trung",
   ],
   authors: [{ name: "Nguyen Chi Trung" }],
   openGraph: {
-    title: "Nguyen Chi Trung | Full-stack Developer",
+    title: "Nguyen Chi Trung | Junior Business Analyst",
     description:
-      "Full-stack Developer building production web and mobile applications.",
+      "Junior Business Analyst with technical background bridging business requirements and technical delivery.",
     type: "website",
   },
 };

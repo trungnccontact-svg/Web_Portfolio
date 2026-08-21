@@ -6,6 +6,7 @@ export interface ClaudeArtifact {
   createdAt: string;
   description?: string;
   iconName?: "user" | "fileCheck" | "trendingUp" | "cpu" | "zap" | "coins" | "shoppingBag" | "bookOpen";
+  isPinned?: boolean;
 }
 
 export const CLAUDE_ARTIFACTS: ClaudeArtifact[] = [

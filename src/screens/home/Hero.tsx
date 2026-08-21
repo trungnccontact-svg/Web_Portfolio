@@ -181,9 +181,9 @@ export default function Hero() {
           className="mt-12 flex items-center gap-8 sm:gap-12 text-center"
         >
           {[
-            { value: "3+", label: "Years Exp." },
-            { value: "10+", label: "Projects" },
-            { value: "5+", label: "Companies" },
+            { value: "1+", label: "Year Exp." },
+            { value: "6+", label: "Projects" },
+            { value: "2", label: "Companies" },
           ].map((stat) => (
             <div key={stat.label} className="flex flex-col items-center">
               <span className="font-heading text-2xl sm:text-3xl font-bold text-foreground">

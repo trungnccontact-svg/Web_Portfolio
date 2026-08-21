@@ -13,7 +13,8 @@
     "english": "English",
     "chess": "Play Chess",
     "nasa": "NASA Space",
-    "claude-artifacts": "Claude Artifacts"
+    "claude-artifacts": "Claude Artifacts",
+    "personal-rules": "Rules"
   },
   "artifacts": {
     "title": "Claude Artifacts",
@@ -54,18 +55,18 @@
   "hero": {
     "greeting": "Hi, my name is",
     "name": "Nguyen Chi Trung",
-    "roles": ["Full-stack Developer", "React Developer", "NestJS Developer", "Mobile Developer"],
-    "description": "I build pixel-perfect, accessible, and performant web & mobile applications.",
+    "roles": ["Junior Business Analyst", "Technical Business Analyst", "Software Engineer / BA", "Full-stack Developer"],
+    "description": "A technically-grounded Junior Business Analyst with 1+ year of hands-on software delivery experience, bridging business requirements and technical implementation.",
     "downloadCV": "Download CV",
     "contactMe": "Contact Me"
   },
   "about": {
     "title": "About Me",
-    "description": "Full-stack Developer with 1+ year of experience building production web and mobile applications using React, React Native, and NestJS. Experienced in AI-assisted development workflows to accelerate delivery across complex features — from UI implementation to API integration. Currently leading CONUT, a group-buying platform built on Next.js, NestJS, and TiDB, applying system-level thinking to architect scalable end-to-end solutions.",
+    "description": "A technically-grounded professional with 1+ year of hands-on software delivery experience across industrial automation and B2C product environments, combined with direct involvement in business model, marketing strategy, and operations for an early-stage e-commerce platform. Comfortable bridging business requirements and technical implementation — working knowledge of SQL, process documentation (Visio/flowcharts), and requirement clarification in cross-functional teams.",
     "info": {
       "phone": "0832942345",
       "email": "trungnc.contact@gmail.com",
-      "address": "No.524C, Nguyen Trai quarter, Lai Thieu ward, Ho Chi Minh City"
+      "address": "Ho Chi Minh City"
     }
   },
   "experience": {
@@ -74,26 +75,21 @@
       {
         "company": "Thuan Nhat – IAS",
         "fullName": "Industrial Automation Solutions",
-        "role": "Programmer",
-        "period": "January 2026 – Present",
+        "role": "Software Engineer",
+        "period": "January 2026 – July 2026",
         "bullets": [
-          "Utilized Microsoft Project Professional to create and maintain project execution plans for factory automation deployments across multiple provinces (Dong Nai, Vinh Long).",
-          "Produced system flowcharts and process documentation using Microsoft Visio, supporting technical handover and requirement clarification for factory-level projects.",
-          "Practiced foundational SQL Server query writing and schema comprehension through self-directed study.",
-          "Contributed to maintenance and feature tasks within a VB.NET / .NET Framework legacy codebase."
+          "Utilized Microsoft Project Professional to create and maintain project execution plans for factory automation deployments across multiple provinces (Dong Nai, Vinh Long), tracking task assignments and progress across team members.",
+          "Produced flowcharts and process documentation for 3+ PCS workflows (incl. Pellet Planning, Dosing processes) and a swimlane diagram for the DHVL4 Marine feed project using Microsoft Visio, supporting technical handover and requirement clarification for factory-level projects.",
+          "Working knowledge of SQL Server and enterprise VB.NET/.NET systems, gained through direct maintenance work on factory-floor applications."
         ]
       },
       {
         "company": "SQ Strategic Solutions",
         "fullName": "SQ Strategic Solutions Company Limited",
-        "role": "Full-stack Developer",
+        "role": "Full stack developer",
         "period": "March 2025 – November 2025",
         "bullets": [
-          "Contributed to the full development lifecycle of 5 production web and mobile applications across real estate, e-commerce, and service-booking domains.",
-          "Independently developed pixel-perfect UI screens using React and Tailwind CSS, translating Figma mockups into responsive, cross-device interfaces.",
-          "Developed backend API modules (NestJS, MongoDB) for analytics, appointment scheduling, and product management.",
-          "Integrated third-party services including Google Maps API, i18n for multilingual support, and Redux Toolkit / Zustand for global state management.",
-          "Participated in daily stand-ups and code reviews under Tech Lead guidance, applying feedback iteratively to improve code quality."
+          "Delivered end-to-end features for production web applications (NestJS/MongoDB backend, React/Tailwind frontend) within a daily Agile delivery cycle — sprint planning, stand-ups, and code review."
         ]
       }
     ]
@@ -104,16 +100,15 @@
       {
         "name": "CONUT",
         "subtitle": "Social Group-Buying E-commerce Platform",
-        "role": "Lead Full-stack Developer",
-        "period": "October 2025 – Present",
+        "role": "Technical & Business Contributor",
+        "period": "August 2025 – March 2026",
         "teamSize": "3",
-        "stack": ["React Native", "Expo", "NestJS", "MongoDB", "TypeScript"],
+        "stack": ["React Native", "Expo", "NestJS", "MongoDB", "TypeScript", "MS Visio"],
         "liveUrl": "https://conut.vn",
         "image": "/images/projects/conut.png",
         "bullets": [
-          "Designed the overall system architecture and database schemas to support group-buying logic, dynamic pricing, and multi-user inventory flows.",
-          "Built the core Group Buying Engine enabling users to form buying teams dynamically for discounted pricing.",
-          "Led end-to-end development across mobile (React Native/Expo) and backend (NestJS) layers."
+          "Participated in core team discussions on business model design, marketing strategy, and day-to-day operations for a social group-buying e-commerce platform focused on agricultural produce distribution.",
+          "Analyzed and mapped 3 core business workflows (buyer group-buy journey, seller product/order management, admin approval) and reviewed the platform's technical specification against its actual implementation to identify scope gaps between planned and built features — supporting both technical delivery and business decision-making within a 3-person founding team."
         ]
       },
       {
@@ -190,39 +185,58 @@
     ]
   },
   "skills": {
-    "title": "Skills",
+    "title": "Skills & Competencies",
     "categories": {
-      "frontend": {
-        "label": "Frontend",
-        "items": ["ReactJS", "React Native (Expo)", "Tailwind CSS", "NativeWind", "Redux Toolkit", "Zustand"]
+      "ba_process": {
+        "label": "Business Analysis & Process",
+        "items": [
+          "Requirement Gathering & Clarification",
+          "Process Mapping & Flowcharting (Visio)",
+          "Data & Workflow Logic Analysis",
+          "Project Planning & Tracking (MS Project)",
+          "AI-Assisted Research & Rapid Prototyping",
+          "Cross-Functional Communication"
+        ]
       },
-      "backend": {
-        "label": "Backend",
-        "items": ["NestJS", "Node.js"]
-      },
-      "database": {
-        "label": "Database",
-        "items": ["MongoDB", "SQL Server"]
-      },
-      "languages": {
-        "label": "Languages",
-        "items": ["JavaScript", "TypeScript"]
+      "technical": {
+        "label": "Technical Background",
+        "items": [
+          "SQL Server & Querying",
+          "MongoDB",
+          "ReactJS & Next.js",
+          "React Native (Expo)",
+          "NestJS & Node.js",
+          "VB.NET / .NET Systems",
+          "Tailwind CSS"
+        ]
       },
       "tools": {
-        "label": "Tools",
-        "items": ["Git/GitHub", "Postman", "Figma", "Docker", "MS Project Professional", "MS Visio"]
+        "label": "Tools & Software",
+        "items": [
+          "Microsoft Visio",
+          "MS Project Professional",
+          "Git / GitHub",
+          "Postman",
+          "Figma",
+          "Docker"
+        ]
       },
       "practices": {
-        "label": "Practices",
-        "items": ["RESTful API Development", "Agile/Scrum", "AI-Assisted Development"]
+        "label": "Methodologies & Delivery",
+        "items": [
+          "Agile / Scrum",
+          "Sprint Planning & Stand-ups",
+          "Scope Gap Analysis",
+          "Technical Specification Review"
+        ]
       }
     }
   },
   "education": {
     "title": "Education",
     "school": "Thu Dau Mot University",
-    "degree": "Bachelor of Engineering — Information Technology",
-    "period": "2020 – 2025"
+    "degree": "Information Technology",
+    "period": "08/2020 – 03/2025"
   },
   "certifications": {
     "title": "Certifications & Activities",
@@ -237,7 +251,7 @@
       {
         "name": "Thu Dau Mot University Entrepreneurship Competition 2024",
         "role": "Participant",
-        "detail": "Developed CONUT.VN – Grocery Delivery Service website."
+        "detail": "Developed CONUT.VN – Social group-buying e-commerce platform."
       },
       {
         "name": "\"Five-Good Students\" Award",

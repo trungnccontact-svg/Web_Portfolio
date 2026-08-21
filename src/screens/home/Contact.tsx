@@ -82,7 +82,7 @@ export default function Contact() {
                   </a>
                 </Button>
                 <Button variant="outline" size="icon" asChild className="rounded-full h-12 w-12 border-2 transition-transform hover:scale-110 active:scale-95">
-                  <a href="https://www.linkedin.com/in/trung-junior-it-bd" target="_blank" rel="noopener noreferrer">
+                  <a href="https://www.linkedin.com/in/trungit2026/" target="_blank" rel="noopener noreferrer">
                     <Linkedin size={20} />
                   </a>
                 </Button>
